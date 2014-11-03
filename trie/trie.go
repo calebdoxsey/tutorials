@@ -81,7 +81,7 @@ func (t *Trie) Delete(key []byte) bool {
 		for i := len(key) - 1; i >= 0; i-- {
 			path[i].children[key[i]] = nil
 			path[i].length--
-			if path[i].value == nil && path[i].length > 0 {
+			if path[i].value != nil || path[i].length > 0 {
 				break
 			}
 		}
