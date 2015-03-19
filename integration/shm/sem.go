@@ -17,11 +17,6 @@ type (
 	sem_t C.sem_t
 )
 
-var (
-	O_CREAT int = C.O_CREAT
-	O_EXCL      = C.O_EXCL
-)
-
 func sem_open(name string, oflag, mode, value int) (*sem_t, error) {
 	c_name := C.CString(name)
 	defer C.free(unsafe.Pointer(c_name))
