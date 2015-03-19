@@ -4,7 +4,9 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
+	"unsafe"
 
 	"github.com/Shopify/sysv_mq"
 	"github.com/edsrzf/mmap-go"
@@ -40,24 +42,23 @@ func server(mq *sysv_mq.MessageQueue) {
 	defer fd.Close()
 	defer shm_unlink("/shm-example")
 
-	err = fd.Truncate(256)
+	err = fd.Truncate(50 * 1024 * 1024)
 	if err != nil {
 		panic(err)
 	}
 
-	m, err := mmap.Map(fd, mmap.RDWR|mmap.EXEC, 0)
+	data, err := mmap.Map(fd, mmap.RDWR|mmap.EXEC, 0)
 	if err != nil {
 		panic(err)
 	}
 
 	for {
-		offset, sz, err := recv(mq)
+		_, sz, err := recv(mq)
 		if err != nil {
 			panic(err)
 		}
-		log.Println("recv", offset, sz)
-
-		log.Println(string(m[offset : offset+sz]))
+		arr := mkArr(data, sz)
+		log.Println("received", len(arr), "doubles")
 	}
 }
 
@@ -68,20 +69,31 @@ func client(mq *sysv_mq.MessageQueue) {
 	}
 	defer fd.Close()
 
-	m, err := mmap.Map(fd, mmap.RDWR|mmap.EXEC, 0)
+	data, err := mmap.Map(fd, mmap.RDWR|mmap.EXEC, 0)
 	if err != nil {
 		panic(err)
 	}
 
-	offset := 0
-	for i := 0; i < 3; i++ {
-		data := "Hello World"
-		copy(m[offset:], data)
-
-		log.Println("sending", offset, len(data))
-		send(mq, offset, len(data))
-		offset += len(data)
+	sz := 1024 * 1024 * 50 / 8
+	arr := mkArr(data, sz)
+	for i := 0; i < sz; i++ {
+		arr[i] = rand.Float64()
 	}
+	log.Println("sending", sz, "doubles")
+	send(mq, 0, sz)
+}
+
+func mkArr(data []byte, sz int) []float64 {
+	// in general:
+	//
+	// (1) grab the address of the first element of the byte slice
+	//     all the subsequent elements will be adjacent
+	// (2) convert that address into an unsafe pointer
+	// (3) convert the unsafe pointer into an array pointer. We tell
+	//     the compiler that the array is as large as possible
+	// (4) convert the array into a slice and give it a fixed length
+	//     and capacity
+	return (*[(1 << 31) - 1]float64)(unsafe.Pointer(&data[0]))[:sz:sz]
 }
 
 func main() {
