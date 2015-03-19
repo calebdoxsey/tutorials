@@ -50,6 +50,7 @@ func BenchmarkV1(b *testing.B) {
 		SumV1(xs)
 	}
 }
+
 func BenchmarkV2(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
