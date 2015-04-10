@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"text/template"
 
 	"github.com/julienschmidt/httprouter"
@@ -64,22 +65,34 @@ func init() {
 		session, _ := sessionStore.Get(req, "session")
 		email, _ := session.Values["email"]
 
+		mainCSSInfo, _ := os.Stat("static/styles/main.css")
+		mainJSInfo, _ := os.Stat("static/scripts/main.js")
+		viewsJSInfo, _ := os.Stat("static/scripts/views.js")
+
 		res.Header().Set("Content-Type", "text/html")
 		io.WriteString(res, `<!DOCTYPE html>
 	<html>
 	<head>
 		<title>CMS Example</title>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.4/css/bootstrap.css" rel="stylesheet">
-		<link href="/static/styles/main.css" rel="stylesheet">
+		<link href="/static/styles/main.css?version=`+fmt.Sprint(mainCSSInfo.ModTime().Unix())+`" rel="stylesheet">
 	</head>
 	<body>
 		<script>var EMAIL = "`+fmt.Sprint(email)+`";</script>
 		<script src="/static/scripts/hyperscript.js"></script>
 		<script>h = hyperscript;</script>
-		<script src="/static/scripts/views.js"></script>
-		<script src="/static/scripts/main.js"></script>
+		<script src="/static/scripts/views.js?version=`+fmt.Sprint(viewsJSInfo.ModTime().Unix())+`"></script>
+		<script src="/static/scripts/main.js?version=`+fmt.Sprint(mainJSInfo.ModTime().Unix())+`"></script>
 	</body>
 	</html>`)
+	})
+
+	// Static
+	static := http.FileServer(http.Dir("static"))
+	router.GET("/static/*filepath", func(res http.ResponseWriter, req *http.Request, params httprouter.Params) {
+		filepath := params.ByName("filepath")
+		req.URL.Path = filepath
+		static.ServeHTTP(res, req)
 	})
 
 	http.Handle("/", router)

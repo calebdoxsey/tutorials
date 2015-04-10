@@ -24,7 +24,19 @@ Views["/signup"] = function() {
       return;
     }
 
-    console.log(emailInput.value, passwordInput1.value, passwordInput2.value);
+    var email = emailInput.value, password = passwordInput1.value;
+
+    api("POST", "/api/users", {
+      "email": email,
+      "password": password
+    }, function(result, error) {
+      if (error) {
+        alert("Error signing up: " + error);
+        return;
+      }
+      EMAIL = email;
+      location.href = "#/";
+    });
   }
 
   return (
@@ -235,7 +247,10 @@ Views["/documents/"] = function() {
       "data-file-name": name
     }, [
       h("span.pull-right", h("span.glyphicon.glyphicon-remove-sign", { onclick: onRemoveFile })),
-      h("a", { "href": "/api/files/" + id, "download": true }, name)
+      h("a", {
+        "href": "/api/files/" + id + "?name=" + encodeURIComponent(name),
+        "download": true
+      }, name)
     ]);
   }
 

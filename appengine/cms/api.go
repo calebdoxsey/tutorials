@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 
 	"code.google.com/p/go-uuid/uuid"
 
@@ -218,6 +219,13 @@ func serveFilesGet(res http.ResponseWriter, req *http.Request, params httprouter
 			return err
 		}
 
+		name := req.URL.Query().Get("name")
+		if name == "" {
+			name = params.ByName("id")
+		}
+		name = regexp.MustCompile("[^a-zA-Z-_.]").ReplaceAllString(name, "")
+
+		res.Header().Set("Content-Disposition", "inline; filename=\""+name+"\"")
 		res.Header().Set("Content-Type", "application/octet-stream")
 		return rc
 	})
