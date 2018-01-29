@@ -91,23 +91,37 @@ Instead of printing data to the console, let's print it to the page with `docume
 .link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-05/ example-05
 
 * A Virtual File System
-
 .code example-06/vfs.go /START OMIT/,/END OMIT/
 
 * A Virtual File System: init
-
 Use an init function to register the virtual file system syscall handlers:
-
 .code example-06/init.go /START OMIT/,/END OMIT/
 
 * A Virtual File System: Write
-
 .code example-06/vfs_write.go /START OMIT/,/END OMIT/
 
 * A Virtual File System: Example
-
 Open a file, write to it, close it, and re-read it.
-
 .code example-06/main.go /START OMIT/,/END OMIT/
-
 .link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-06/ example-06
+
+* A Virtual File System: Persistence
+We can use IndexedDB to implement persistence. First update the virtual file system:
+.code example-07/vfs.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: Persistence
+Open reads the file from IndexedDB:
+.code example-07/vfs_open.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: Persistence
+And Close writes it:
+.code example-07/vfs_close.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: Persistence
+.code example-07/main.go /START OMIT/,/END OMIT/
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-07/ example-07
+
+* A Virtual File System: Named Pipes
+What about special files, like a named pipe created with `mkfifo`?
+
+* Network Sockets
