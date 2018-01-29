@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="./assets/js/postscribe.min.js"></script>
+    </head>
+    <body>
+        <pre id="body"></pre>
+<script type="text/javascript">
+
+(function() {
+    if (location.search) {
+        postscribe('#body', '<script src="./assets/js/' + location.search.substr(1) + '"><\/script>');
+    }
+})()
+
+</script>
+    </body>
+</html>
