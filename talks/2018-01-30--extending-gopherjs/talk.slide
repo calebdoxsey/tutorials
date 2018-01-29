@@ -1,0 +1,82 @@
+Extending GopherJS
+
+Caleb Doxsey
+Software Engineer, Datadog
+caleb@doxsey.net
+http://www.doxsey.net
+
+* Who I Am
+
+.image assets/cover.png 400 _
+.caption golang-book.com
+
+* We're Hiring!
+
+.image assets/datadog.png 400 _
+
+* GopherJS
+
+GopherJS is a compiler for Go which produces Javascript intended to run in the browser. Code is compiled with:
+
+.code example-01/build.bash
+
+Or:
+
+.code example-01/serve.bash
+
+Programs are standard Go programs:
+
+.code example-01/main.go
+
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-01/ example-01
+
+
+* Javascript
+
+Javascript can be accessed via the `gopherjs/js` library:
+.code example-02/main.go
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-01/ example-02
+
+* Javascript Cont'd
+
+This API is sufficient to call any function available in Javascript and bindings exist for popular libraries like React:
+.code example-02/react.go
+
+* Compatibility
+
+GopherJS implements the entire language and most packages. An example:
+.code example-03/sort.go /START OMIT/,/END OMIT/
+
+* Merge
+.code example-03/merge.go /START OMIT/,/END OMIT/
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-03/ example-03
+
+* What Doesn't Work
+Not everything works in GopherJS, notably:
+- `stdin`
+- files
+- network access
+- executing commands
+.code example-04/main.go /START OMIT/,/END OMIT/
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-04/ example-04
+.image assets/syscall-warning.png
+
+* Sandbox
+
+GopherJS can't provides these capabilities, because your Browser can't provide these capabilities. It won't let you write files, or bind a port, or make a raw TCP connection, and it definitely won't let you execute an arbitrary program, for obvious reasons.
+
+But this is Go's bread and butter. Go is more than just a programming language. It's also a set of powerful API abstractions for working with the operating system. Nearly all real-world, practical Go programs need these capabilities in order to work.
+
+Without the APIs is GopherJS a brilliant technical curiosity?
+
+* The Most Useless Machine in the World?
+.image assets/useless-machine.gif
+
+* Emulation
+What if we emulated an operating system's API?
+
+If the emulation layer is close enough to the real thing, programs using the API will never be the wiser.
+
+* System Calls
+
+* How GopherJS Works
