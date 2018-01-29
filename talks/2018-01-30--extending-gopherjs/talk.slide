@@ -80,3 +80,34 @@ If the emulation layer is close enough to the real thing, programs using the API
 * System Calls
 
 * How GopherJS Works
+
+* An Example: stdout to page
+Instead of printing data to the console, let's print it to the page with `document.write`.
+
+.code example-05/write.go /START OMIT/,/END OMIT/
+
+.code example-05/main.go /START OMIT/,/END OMIT/
+
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-05/ example-05
+
+* A Virtual File System
+
+.code example-06/vfs.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: init
+
+Use an init function to register the virtual file system syscall handlers:
+
+.code example-06/init.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: Write
+
+.code example-06/vfs_write.go /START OMIT/,/END OMIT/
+
+* A Virtual File System: Example
+
+Open a file, write to it, close it, and re-read it.
+
+.code example-06/main.go /START OMIT/,/END OMIT/
+
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-06/ example-06

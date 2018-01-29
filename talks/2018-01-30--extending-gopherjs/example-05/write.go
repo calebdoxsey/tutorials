@@ -12,7 +12,7 @@ import (
 var minusOne = -1
 
 func init() {
-	ext.RegisterSyscallHandler(syscall.SYS_WRITE, func(fd uintptr, buf uintptr, count uintptr) (r1, r2 uintptr, err syscall.Errno) {
+	ext.RegisterSyscallHandler(syscall.SYS_WRITE, func(fd, buf, count uintptr) (r1, r2 uintptr, err syscall.Errno) {
 		switch fd {
 		case uintptr(syscall.Stdout), uintptr(syscall.Stderr):
 			js.Global.Get("document").Call("write", "<pre>"+uint8ArrayToString(buf)+"</pre>")
