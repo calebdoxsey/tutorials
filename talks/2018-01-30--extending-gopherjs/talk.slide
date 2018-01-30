@@ -121,7 +121,5 @@ And Close writes it:
 .code example-07/main.go /START OMIT/,/END OMIT/
 .link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-07/ example-07
 
-* A Virtual File System: Named Pipes
-What about special files, like a named pipe created with `mkfifo`?
-
 * Network Sockets
+The same approach could be implemented for network sockets. Implement syscall handlers for `socket`, `bind`, `listen`, `connect`, `etc`.

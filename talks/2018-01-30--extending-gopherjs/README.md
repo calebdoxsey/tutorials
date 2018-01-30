@@ -9,5 +9,4 @@
 5. Syscall Write using `document.write`
 6. Syscall Virtual File System
 7. Persistence
-8. Named Pipe
-8. Network Socket
+8. Network Sockets
