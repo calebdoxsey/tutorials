@@ -3,7 +3,6 @@ package main
 import (
 	"io"
 	"log"
-	"net"
 	"net/http"
 	"os"
 
@@ -20,6 +19,7 @@ var upgrader = websocket.Upgrader{
 func main() {
 	log.SetFlags(0)
 
+	http.HandleFunc("/dial/", handleDial)
 	http.HandleFunc("/listen/", handleListen)
 
 	addr := os.Getenv("ADDR")
@@ -32,7 +32,7 @@ func main() {
 
 // START PROXY OMIT
 
-func proxy(dst, src net.Conn) error {
+func proxy(dst, src io.ReadWriter) error {
 	var eg errgroup.Group
 	eg.Go(func() error {
 		_, err := io.Copy(dst, src)

@@ -140,3 +140,33 @@ Rather than show you the nitty, gritty details, I'll show you a fully fledged ex
 * Server
 The websocket `net.Conn`:
 .code example-08/server/conn.go  /START OMIT/,/END OMIT/
+
+* Proxy: listen
+The websocket listener:
+.code example-08/proxy/listen.go  /START LISTEN OMIT/,/END LISTEN OMIT/
+
+* Proxy: accept
+The websocket accept loop:
+.code example-08/proxy/listen.go  /START ACCEPT OMIT/,/END ACCEPT OMIT/
+
+* Proxy: proxy
+I love this:
+.code example-08/proxy/main.go  /START PROXY OMIT/,/END PROXY OMIT/
+
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-08/server/ server
+.link http://localhost:5001/ client
+
+* Client
+Let's take it further, we can run the client via GopherJS too:
+.code example-08/client/main.go /START OMIT/,/END OMIT/
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-08/client/ client
+
+And now we're running a browser in a browser.
+
+* Browsers All the Way Down
+I even have a way of running the proxy in GopherJS...
+
+It's browsers all the way down
+
+* STOP
+.image ./assets/jurassic-park.jpg

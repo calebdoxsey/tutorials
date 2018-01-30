@@ -18,24 +18,23 @@ func handleListen(w http.ResponseWriter, r *http.Request) {
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println("failed to upgrade connection to websocket:", err)
+		log.Println("failed to upgrade connection to websocket:", err) // OMIT
 		return
 	}
 	defer ws.Close()
 
-	wsc := &binaryWSConn{
-		Conn: ws,
-	}
+	wsc := &binaryWSConn{Conn: ws}
 
 	dst, err := yamux.Client(wsc, yamux.DefaultConfig())
 	if err != nil {
-		log.Println("failed to create session", err)
+		log.Println("failed to create session", err) // OMIT
+		return
 	}
 	defer dst.Close()
 
 	src, err := net.Listen("tcp", "127.0.0.1:"+port)
 	if err != nil {
-		log.Println("failed to create new TCP listener:", err)
+		log.Println("failed to create new TCP listener:", err) // OMIT
 		return
 	}
 	defer src.Close()
@@ -56,6 +55,7 @@ func handleListen(w http.ResponseWriter, r *http.Request) {
 	defer log.Println("closed listener", src.Addr())
 
 	for {
+		// START ACCEPT OMIT
 		srcc, err := src.Accept()
 		if err != nil {
 			log.Println("error accepting connection:", err)
@@ -77,5 +77,6 @@ func handleListen(w http.ResponseWriter, r *http.Request) {
 				log.Println("error handling connection:", err)
 			}
 		}()
+		// END ACCEPT OMIT
 	}
 }
