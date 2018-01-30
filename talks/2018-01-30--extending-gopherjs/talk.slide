@@ -67,7 +67,7 @@ GopherJS can't provides these capabilities, because your Browser can't provide t
 
 But this is Go's bread and butter. Go is more than just a programming language. It's also a set of powerful API abstractions for working with the operating system. Nearly all real-world, practical Go programs need these capabilities in order to work.
 
-Without the APIs is GopherJS a brilliant technical curiosity?
+Without the APIs is GopherJS just a brilliant technical curiosity?
 
 * The Most Useless Machine in the World?
 .image assets/useless-machine.gif
@@ -78,8 +78,33 @@ What if we emulated an operating system's API?
 If the emulation layer is close enough to the real thing, programs using the API will never be the wiser.
 
 * System Calls
+System Calls are the mechanism by which programs can interface with the Operating System. Different operating systems and architectures have different mechanisms for invoking system calls:
+
+.link https://golang.org/src/syscall/asm_linux_amd64.s Linux AMD64
+
+Linux is a monolothic kernel with lots and lots of system calls:
+
+.link http://man7.org/linux/man-pages/man2/syscalls.2.html Syscall Listing
+
+Which can also be found in Go:
+
+.link https://golang.org/pkg/syscall/#SYS_READ Syscall Constants
+
+But most programs only use a few of them.
 
 * How GopherJS Works
+
+GopherJS works by modifying the standard package code included with Go so that it can run in the browser. The pseudo file system is here:
+
+.link https://github.com/gopherjs/gopherjs/tree/master/compiler/natives/src Natives
+
+Any code not altered will be preserved, so the goal is to make the minimal number of changes to get things to work. System calls simply error out:
+
+.link https://github.com/gopherjs/gopherjs/blob/master/compiler/natives/src/syscall/syscall_unix.go#L57 Syscalls
+
+I modified GopherJS slightly to make it easier to change system calls:
+
+.link https://github.com/gopherjs/gopherjs/compare/master...badgerodon:ext My Changes
 
 * An Example: stdout to page
 Instead of printing data to the console, let's print it to the page with `document.write`.
@@ -91,11 +116,11 @@ Instead of printing data to the console, let's print it to the page with `docume
 .link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-05/ example-05
 
 * A Virtual File System
-.code example-06/vfs.go /START OMIT/,/END OMIT/
-
-* A Virtual File System: init
 Use an init function to register the virtual file system syscall handlers:
 .code example-06/init.go /START OMIT/,/END OMIT/
+
+* A Virtual File System
+.code example-06/vfs.go /START OMIT/,/END OMIT/
 
 * A Virtual File System: Write
 .code example-06/vfs_write.go /START OMIT/,/END OMIT/
