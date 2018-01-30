@@ -123,3 +123,20 @@ And Close writes it:
 
 * Network Sockets
 The same approach could be implemented for network sockets. Implement syscall handlers for `socket`, `bind`, `listen`, `connect`, `etc`.
+
+Rather than show you the nitty, gritty details, I'll show you a fully fledged example.
+
+* Run the net/http Server in GopherJS
+
+- The "server" will run using the standard http `Serve` on a custom `net.Listener`
+- The `net.Listener` is attached to a websocket connected to a special proxy
+- The websocket connection is converted to a `net.Listener` using `yamux`
+- The proxy receives the connection from the server and starts a real network listener
+- All communication on that port is forwarded both ways by the proxy
+
+* Server
+.code example-08/server/main.go  /START OMIT/,/END OMIT/
+
+* Server
+The websocket `net.Conn`:
+.code example-08/server/conn.go  /START OMIT/,/END OMIT/
