@@ -35,7 +35,7 @@ Programs are standard Go programs:
 
 Javascript can be accessed via the `gopherjs/js` library:
 .code example-02/main.go
-.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-01/ example-02
+.link http://localhost:8080/github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-02/ example-02
 
 * Javascript Cont'd
 
