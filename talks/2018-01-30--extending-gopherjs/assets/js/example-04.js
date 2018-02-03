@@ -2249,7 +2249,7 @@ $packages["runtime/internal/sys"] = (function() {
 	return $pkg;
 })();
 $packages["runtime"] = (function() {
-	var $pkg = {}, $init, js, sys, TypeAssertionError, errorString, ptrType$4, init, Goexit, SetFinalizer, KeepAlive, throw$1;
+	var $pkg = {}, $init, js, sys, TypeAssertionError, errorString, ptrType$4, init, GOROOT, Goexit, SetFinalizer, KeepAlive, throw$1;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	sys = $packages["runtime/internal/sys"];
 	TypeAssertionError = $pkg.TypeAssertionError = $newType(0, $kindStruct, "runtime.TypeAssertionError", true, "runtime", true, function(interfaceString_, concreteString_, assertedString_, missingMethod_) {
@@ -2278,6 +2278,19 @@ $packages["runtime"] = (function() {
 		e = new TypeAssertionError.ptr("", "", "", "");
 		$unused(e);
 	};
+	GOROOT = function() {
+		var goroot, process;
+		process = $global.process;
+		if (process === undefined) {
+			return "/";
+		}
+		goroot = process.env.GOROOT;
+		if (!(goroot === undefined)) {
+			return $internalize(goroot, $String);
+		}
+		return "/usr/local/go";
+	};
+	$pkg.GOROOT = GOROOT;
 	Goexit = function() {
 		$curGoroutine.exit = $externalize(true, $Bool);
 		$throw(null);
@@ -3480,34 +3493,45 @@ $packages["math"] = (function() {
 	return $pkg;
 })();
 $packages["syscall"] = (function() {
-	var $pkg = {}, $init, errors, js, race, runtime, sync, SockaddrDatalink, mmapper, Errno, Sockaddr, SockaddrInet4, SockaddrInet6, SockaddrUnix, Timespec, Stat_t, RawSockaddrInet4, RawSockaddrInet6, RawSockaddrUnix, RawSockaddrDatalink, RawSockaddr, RawSockaddrAny, _Socklen, Linger, Iovec, IPMreq, IPv6Mreq, Msghdr, sliceType, sliceType$1, ptrType$2, arrayType, arrayType$1, ptrType$11, arrayType$3, arrayType$4, arrayType$5, arrayType$6, arrayType$10, ptrType$16, arrayType$11, ptrType$17, ptrType$18, structType, ptrType$20, ptrType$21, ptrType$27, mapType, funcType$2, funcType$3, ptrType$28, ptrType$29, ptrType$30, ptrType$31, arrayType$15, ptrType$32, warningPrinted, lineBuffer, customHandler, customHandler6, syscallModule, alreadyTriedToLoad, minusOne, envs, freebsdConfArch, minRoutingSockaddrLen, mapper, errEAGAIN, errEINVAL, errENOENT, ioSync, ioSync$24ptr, errors$1, init, printWarning, printToConsole, indexByte, runtime_envs, syscall, Syscall, Syscall6, BytePtrFromString, readInt, readIntBE, readIntLE, ParseDirent, CloseOnExec, SetNonblock, msanRead, msanWrite, rsaAlignOf, itoa, uitoa, ReadDirent, anyToSockaddr, Accept, Recvmsg, SendmsgN, direntIno, direntReclen, direntNamlen, errnoErr, Read, Write, Recvfrom, Sendto, SetsockoptByte, SetsockoptInt, SetsockoptInet4Addr, SetsockoptIPMreq, SetsockoptIPv6Mreq, SetsockoptLinger, accept, setsockopt, Shutdown, recvfrom, sendto, recvmsg, sendmsg, fcntl, Close, Fchdir, Fchmod, Fchown, Fstat, Fsync, Ftruncate, Getdirentries, Lstat, Pread, Pwrite, read, Seek, write, mmap, munmap;
-	errors = $packages["errors"];
+	var $pkg = {}, $init, js, race, runtime, sync, SockaddrLinklayer, SockaddrNetlink, mmapper, Errno, Sockaddr, SockaddrInet4, SockaddrInet6, SockaddrUnix, Timespec, Stat_t, RawSockaddrInet4, RawSockaddrInet6, RawSockaddrUnix, RawSockaddrLinklayer, RawSockaddrNetlink, RawSockaddr, RawSockaddrAny, _Socklen, Linger, Iovec, IPMreq, IPMreqn, IPv6Mreq, Msghdr, sliceType, sliceType$1, ptrType$2, ptrType$4, arrayType$1, ptrType$8, arrayType$2, ptrType$11, arrayType$4, arrayType$7, arrayType$8, arrayType$9, arrayType$10, ptrType$18, ptrType$19, structType, ptrType$22, ptrType$24, ptrType$25, mapType, funcType$2, funcType$3, ptrType$26, ptrType$27, ptrType$28, ptrType$29, arrayType$15, ptrType$31, warningPrinted, lineBuffer, customHandler, customHandler6, syscallModule, alreadyTriedToLoad, minusOne, envs, mapper, errEAGAIN, errEINVAL, errENOENT, ioSync, ioSync$24ptr, errors, init, printWarning, printToConsole, indexByte, runtime_envs, syscall, Syscall, Syscall6, BytePtrFromString, readInt, readIntBE, readIntLE, ParseDirent, CloseOnExec, SetNonblock, msanRead, msanWrite, itoa, uitoa, anyToSockaddr, Accept, Accept4, SetsockoptIPMreqn, Recvmsg, SendmsgN, ReadDirent, direntIno, direntReclen, direntNamlen, errnoErr, Read, Write, Recvfrom, Sendto, SetsockoptByte, SetsockoptInt, SetsockoptInet4Addr, SetsockoptIPMreq, SetsockoptIPv6Mreq, SetsockoptLinger, Close, Fchdir, Fchmod, fcntl, Fsync, Getdents, read, write, munmap, Fchown, Fstat, Ftruncate, Lstat, Pread, Pwrite, Seek, Shutdown, accept, accept4, setsockopt, recvfrom, sendto, recvmsg, sendmsg, mmap;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	race = $packages["internal/race"];
 	runtime = $packages["runtime"];
 	sync = $packages["sync"];
-	SockaddrDatalink = $pkg.SockaddrDatalink = $newType(0, $kindStruct, "syscall.SockaddrDatalink", true, "syscall", true, function(Len_, Family_, Index_, Type_, Nlen_, Alen_, Slen_, Data_, raw_) {
+	SockaddrLinklayer = $pkg.SockaddrLinklayer = $newType(0, $kindStruct, "syscall.SockaddrLinklayer", true, "syscall", true, function(Protocol_, Ifindex_, Hatype_, Pkttype_, Halen_, Addr_, raw_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
-			this.Family = 0;
-			this.Index = 0;
-			this.Type = 0;
-			this.Nlen = 0;
-			this.Alen = 0;
-			this.Slen = 0;
-			this.Data = arrayType$3.zero();
-			this.raw = new RawSockaddrDatalink.ptr(0, 0, 0, 0, 0, 0, 0, arrayType$3.zero());
+			this.Protocol = 0;
+			this.Ifindex = 0;
+			this.Hatype = 0;
+			this.Pkttype = 0;
+			this.Halen = 0;
+			this.Addr = arrayType$1.zero();
+			this.raw = new RawSockaddrLinklayer.ptr(0, 0, 0, 0, 0, 0, arrayType$1.zero());
 			return;
 		}
-		this.Len = Len_;
+		this.Protocol = Protocol_;
+		this.Ifindex = Ifindex_;
+		this.Hatype = Hatype_;
+		this.Pkttype = Pkttype_;
+		this.Halen = Halen_;
+		this.Addr = Addr_;
+		this.raw = raw_;
+	});
+	SockaddrNetlink = $pkg.SockaddrNetlink = $newType(0, $kindStruct, "syscall.SockaddrNetlink", true, "syscall", true, function(Family_, Pad_, Pid_, Groups_, raw_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Family = 0;
+			this.Pad = 0;
+			this.Pid = 0;
+			this.Groups = 0;
+			this.raw = new RawSockaddrNetlink.ptr(0, 0, 0, 0);
+			return;
+		}
 		this.Family = Family_;
-		this.Index = Index_;
-		this.Type = Type_;
-		this.Nlen = Nlen_;
-		this.Alen = Alen_;
-		this.Slen = Slen_;
-		this.Data = Data_;
+		this.Pad = Pad_;
+		this.Pid = Pid_;
+		this.Groups = Groups_;
 		this.raw = raw_;
 	});
 	mmapper = $pkg.mmapper = $newType(0, $kindStruct, "syscall.mmapper", true, "syscall", false, function(Mutex_, active_, mmap_, munmap_) {
@@ -3530,8 +3554,8 @@ $packages["syscall"] = (function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Port = 0;
-			this.Addr = arrayType$1.zero();
-			this.raw = new RawSockaddrInet4.ptr(0, 0, 0, arrayType$1.zero(), arrayType$6.zero());
+			this.Addr = arrayType$8.zero();
+			this.raw = new RawSockaddrInet4.ptr(0, 0, arrayType$8.zero(), arrayType$1.zero());
 			return;
 		}
 		this.Port = Port_;
@@ -3543,8 +3567,8 @@ $packages["syscall"] = (function() {
 		if (arguments.length === 0) {
 			this.Port = 0;
 			this.ZoneId = 0;
-			this.Addr = arrayType.zero();
-			this.raw = new RawSockaddrInet6.ptr(0, 0, 0, 0, arrayType.zero(), 0);
+			this.Addr = arrayType$2.zero();
+			this.raw = new RawSockaddrInet6.ptr(0, 0, 0, arrayType$2.zero(), 0);
 			return;
 		}
 		this.Port = Port_;
@@ -3556,7 +3580,7 @@ $packages["syscall"] = (function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Name = "";
-			this.raw = new RawSockaddrUnix.ptr(0, 0, arrayType$11.zero());
+			this.raw = new RawSockaddrUnix.ptr(0, arrayType$7.zero());
 			return;
 		}
 		this.Name = Name_;
@@ -3572,135 +3596,131 @@ $packages["syscall"] = (function() {
 		this.Sec = Sec_;
 		this.Nsec = Nsec_;
 	});
-	Stat_t = $pkg.Stat_t = $newType(0, $kindStruct, "syscall.Stat_t", true, "syscall", true, function(Dev_, Mode_, Nlink_, Ino_, Uid_, Gid_, Rdev_, Pad_cgo_0_, Atimespec_, Mtimespec_, Ctimespec_, Birthtimespec_, Size_, Blocks_, Blksize_, Flags_, Gen_, Lspare_, Qspare_) {
+	Stat_t = $pkg.Stat_t = $newType(0, $kindStruct, "syscall.Stat_t", true, "syscall", true, function(Dev_, Ino_, Nlink_, Mode_, Uid_, Gid_, X__pad0_, Rdev_, Size_, Blksize_, Blocks_, Atim_, Mtim_, Ctim_, X__unused_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Dev = 0;
-			this.Mode = 0;
-			this.Nlink = 0;
+			this.Dev = new $Uint64(0, 0);
 			this.Ino = new $Uint64(0, 0);
+			this.Nlink = new $Uint64(0, 0);
+			this.Mode = 0;
 			this.Uid = 0;
 			this.Gid = 0;
-			this.Rdev = 0;
-			this.Pad_cgo_0 = arrayType$1.zero();
-			this.Atimespec = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
-			this.Mtimespec = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
-			this.Ctimespec = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
-			this.Birthtimespec = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
+			this.X__pad0 = 0;
+			this.Rdev = new $Uint64(0, 0);
 			this.Size = new $Int64(0, 0);
+			this.Blksize = new $Int64(0, 0);
 			this.Blocks = new $Int64(0, 0);
-			this.Blksize = 0;
-			this.Flags = 0;
-			this.Gen = 0;
-			this.Lspare = 0;
-			this.Qspare = arrayType$15.zero();
+			this.Atim = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
+			this.Mtim = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
+			this.Ctim = new Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0));
+			this.X__unused = arrayType$15.zero();
 			return;
 		}
 		this.Dev = Dev_;
-		this.Mode = Mode_;
-		this.Nlink = Nlink_;
 		this.Ino = Ino_;
+		this.Nlink = Nlink_;
+		this.Mode = Mode_;
 		this.Uid = Uid_;
 		this.Gid = Gid_;
+		this.X__pad0 = X__pad0_;
 		this.Rdev = Rdev_;
-		this.Pad_cgo_0 = Pad_cgo_0_;
-		this.Atimespec = Atimespec_;
-		this.Mtimespec = Mtimespec_;
-		this.Ctimespec = Ctimespec_;
-		this.Birthtimespec = Birthtimespec_;
 		this.Size = Size_;
-		this.Blocks = Blocks_;
 		this.Blksize = Blksize_;
-		this.Flags = Flags_;
-		this.Gen = Gen_;
-		this.Lspare = Lspare_;
-		this.Qspare = Qspare_;
+		this.Blocks = Blocks_;
+		this.Atim = Atim_;
+		this.Mtim = Mtim_;
+		this.Ctim = Ctim_;
+		this.X__unused = X__unused_;
 	});
-	RawSockaddrInet4 = $pkg.RawSockaddrInet4 = $newType(0, $kindStruct, "syscall.RawSockaddrInet4", true, "syscall", true, function(Len_, Family_, Port_, Addr_, Zero_) {
+	RawSockaddrInet4 = $pkg.RawSockaddrInet4 = $newType(0, $kindStruct, "syscall.RawSockaddrInet4", true, "syscall", true, function(Family_, Port_, Addr_, Zero_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
 			this.Family = 0;
 			this.Port = 0;
-			this.Addr = arrayType$1.zero();
-			this.Zero = arrayType$6.zero();
+			this.Addr = arrayType$8.zero();
+			this.Zero = arrayType$1.zero();
 			return;
 		}
-		this.Len = Len_;
 		this.Family = Family_;
 		this.Port = Port_;
 		this.Addr = Addr_;
 		this.Zero = Zero_;
 	});
-	RawSockaddrInet6 = $pkg.RawSockaddrInet6 = $newType(0, $kindStruct, "syscall.RawSockaddrInet6", true, "syscall", true, function(Len_, Family_, Port_, Flowinfo_, Addr_, Scope_id_) {
+	RawSockaddrInet6 = $pkg.RawSockaddrInet6 = $newType(0, $kindStruct, "syscall.RawSockaddrInet6", true, "syscall", true, function(Family_, Port_, Flowinfo_, Addr_, Scope_id_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
 			this.Family = 0;
 			this.Port = 0;
 			this.Flowinfo = 0;
-			this.Addr = arrayType.zero();
+			this.Addr = arrayType$2.zero();
 			this.Scope_id = 0;
 			return;
 		}
-		this.Len = Len_;
 		this.Family = Family_;
 		this.Port = Port_;
 		this.Flowinfo = Flowinfo_;
 		this.Addr = Addr_;
 		this.Scope_id = Scope_id_;
 	});
-	RawSockaddrUnix = $pkg.RawSockaddrUnix = $newType(0, $kindStruct, "syscall.RawSockaddrUnix", true, "syscall", true, function(Len_, Family_, Path_) {
+	RawSockaddrUnix = $pkg.RawSockaddrUnix = $newType(0, $kindStruct, "syscall.RawSockaddrUnix", true, "syscall", true, function(Family_, Path_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
 			this.Family = 0;
-			this.Path = arrayType$11.zero();
+			this.Path = arrayType$7.zero();
 			return;
 		}
-		this.Len = Len_;
 		this.Family = Family_;
 		this.Path = Path_;
 	});
-	RawSockaddrDatalink = $pkg.RawSockaddrDatalink = $newType(0, $kindStruct, "syscall.RawSockaddrDatalink", true, "syscall", true, function(Len_, Family_, Index_, Type_, Nlen_, Alen_, Slen_, Data_) {
+	RawSockaddrLinklayer = $pkg.RawSockaddrLinklayer = $newType(0, $kindStruct, "syscall.RawSockaddrLinklayer", true, "syscall", true, function(Family_, Protocol_, Ifindex_, Hatype_, Pkttype_, Halen_, Addr_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
 			this.Family = 0;
-			this.Index = 0;
-			this.Type = 0;
-			this.Nlen = 0;
-			this.Alen = 0;
-			this.Slen = 0;
-			this.Data = arrayType$3.zero();
+			this.Protocol = 0;
+			this.Ifindex = 0;
+			this.Hatype = 0;
+			this.Pkttype = 0;
+			this.Halen = 0;
+			this.Addr = arrayType$1.zero();
 			return;
 		}
-		this.Len = Len_;
 		this.Family = Family_;
-		this.Index = Index_;
-		this.Type = Type_;
-		this.Nlen = Nlen_;
-		this.Alen = Alen_;
-		this.Slen = Slen_;
-		this.Data = Data_;
+		this.Protocol = Protocol_;
+		this.Ifindex = Ifindex_;
+		this.Hatype = Hatype_;
+		this.Pkttype = Pkttype_;
+		this.Halen = Halen_;
+		this.Addr = Addr_;
 	});
-	RawSockaddr = $pkg.RawSockaddr = $newType(0, $kindStruct, "syscall.RawSockaddr", true, "syscall", true, function(Len_, Family_, Data_) {
+	RawSockaddrNetlink = $pkg.RawSockaddrNetlink = $newType(0, $kindStruct, "syscall.RawSockaddrNetlink", true, "syscall", true, function(Family_, Pad_, Pid_, Groups_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Len = 0;
 			this.Family = 0;
-			this.Data = arrayType$4.zero();
+			this.Pad = 0;
+			this.Pid = 0;
+			this.Groups = 0;
 			return;
 		}
-		this.Len = Len_;
+		this.Family = Family_;
+		this.Pad = Pad_;
+		this.Pid = Pid_;
+		this.Groups = Groups_;
+	});
+	RawSockaddr = $pkg.RawSockaddr = $newType(0, $kindStruct, "syscall.RawSockaddr", true, "syscall", true, function(Family_, Data_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Family = 0;
+			this.Data = arrayType$9.zero();
+			return;
+		}
 		this.Family = Family_;
 		this.Data = Data_;
 	});
 	RawSockaddrAny = $pkg.RawSockaddrAny = $newType(0, $kindStruct, "syscall.RawSockaddrAny", true, "syscall", true, function(Addr_, Pad_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Addr = new RawSockaddr.ptr(0, 0, arrayType$4.zero());
-			this.Pad = arrayType$5.zero();
+			this.Addr = new RawSockaddr.ptr(0, arrayType$9.zero());
+			this.Pad = arrayType$10.zero();
 			return;
 		}
 		this.Addr = Addr_;
@@ -3730,35 +3750,47 @@ $packages["syscall"] = (function() {
 	IPMreq = $pkg.IPMreq = $newType(0, $kindStruct, "syscall.IPMreq", true, "syscall", true, function(Multiaddr_, Interface_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Multiaddr = arrayType$1.zero();
-			this.Interface = arrayType$1.zero();
+			this.Multiaddr = arrayType$8.zero();
+			this.Interface = arrayType$8.zero();
 			return;
 		}
 		this.Multiaddr = Multiaddr_;
 		this.Interface = Interface_;
 	});
+	IPMreqn = $pkg.IPMreqn = $newType(0, $kindStruct, "syscall.IPMreqn", true, "syscall", true, function(Multiaddr_, Address_, Ifindex_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Multiaddr = arrayType$8.zero();
+			this.Address = arrayType$8.zero();
+			this.Ifindex = 0;
+			return;
+		}
+		this.Multiaddr = Multiaddr_;
+		this.Address = Address_;
+		this.Ifindex = Ifindex_;
+	});
 	IPv6Mreq = $pkg.IPv6Mreq = $newType(0, $kindStruct, "syscall.IPv6Mreq", true, "syscall", true, function(Multiaddr_, Interface_) {
 		this.$val = this;
 		if (arguments.length === 0) {
-			this.Multiaddr = arrayType.zero();
+			this.Multiaddr = arrayType$2.zero();
 			this.Interface = 0;
 			return;
 		}
 		this.Multiaddr = Multiaddr_;
 		this.Interface = Interface_;
 	});
-	Msghdr = $pkg.Msghdr = $newType(0, $kindStruct, "syscall.Msghdr", true, "syscall", true, function(Name_, Namelen_, Pad_cgo_0_, Iov_, Iovlen_, Pad_cgo_1_, Control_, Controllen_, Flags_) {
+	Msghdr = $pkg.Msghdr = $newType(0, $kindStruct, "syscall.Msghdr", true, "syscall", true, function(Name_, Namelen_, Pad_cgo_0_, Iov_, Iovlen_, Control_, Controllen_, Flags_, Pad_cgo_1_) {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Name = ptrType$2.nil;
 			this.Namelen = 0;
-			this.Pad_cgo_0 = arrayType$1.zero();
-			this.Iov = ptrType$18.nil;
-			this.Iovlen = 0;
-			this.Pad_cgo_1 = arrayType$1.zero();
+			this.Pad_cgo_0 = arrayType$8.zero();
+			this.Iov = ptrType$19.nil;
+			this.Iovlen = new $Uint64(0, 0);
 			this.Control = ptrType$2.nil;
-			this.Controllen = 0;
+			this.Controllen = new $Uint64(0, 0);
 			this.Flags = 0;
+			this.Pad_cgo_1 = arrayType$8.zero();
 			return;
 		}
 		this.Name = Name_;
@@ -3766,39 +3798,39 @@ $packages["syscall"] = (function() {
 		this.Pad_cgo_0 = Pad_cgo_0_;
 		this.Iov = Iov_;
 		this.Iovlen = Iovlen_;
-		this.Pad_cgo_1 = Pad_cgo_1_;
 		this.Control = Control_;
 		this.Controllen = Controllen_;
 		this.Flags = Flags_;
+		this.Pad_cgo_1 = Pad_cgo_1_;
 	});
 	sliceType = $sliceType($Uint8);
 	sliceType$1 = $sliceType($String);
 	ptrType$2 = $ptrType($Uint8);
-	arrayType = $arrayType($Uint8, 16);
-	arrayType$1 = $arrayType($Uint8, 4);
-	ptrType$11 = $ptrType(SockaddrDatalink);
-	arrayType$3 = $arrayType($Int8, 12);
-	arrayType$4 = $arrayType($Int8, 14);
-	arrayType$5 = $arrayType($Int8, 92);
-	arrayType$6 = $arrayType($Int8, 8);
-	arrayType$10 = $arrayType($Uint8, 32);
-	ptrType$16 = $ptrType($Uint16);
-	arrayType$11 = $arrayType($Int8, 104);
-	ptrType$17 = $ptrType(_Socklen);
-	ptrType$18 = $ptrType(Iovec);
+	ptrType$4 = $ptrType($Int32);
+	arrayType$1 = $arrayType($Uint8, 8);
+	ptrType$8 = $ptrType($Uint16);
+	arrayType$2 = $arrayType($Uint8, 16);
+	ptrType$11 = $ptrType(SockaddrNetlink);
+	arrayType$4 = $arrayType($Uint8, 32);
+	arrayType$7 = $arrayType($Int8, 108);
+	arrayType$8 = $arrayType($Uint8, 4);
+	arrayType$9 = $arrayType($Int8, 14);
+	arrayType$10 = $arrayType($Int8, 96);
+	ptrType$18 = $ptrType(_Socklen);
+	ptrType$19 = $ptrType(Iovec);
 	structType = $structType("syscall", [{prop: "addr", name: "addr", anonymous: false, exported: false, typ: $Uintptr, tag: ""}, {prop: "len", name: "len", anonymous: false, exported: false, typ: $Int, tag: ""}, {prop: "cap", name: "cap", anonymous: false, exported: false, typ: $Int, tag: ""}]);
-	ptrType$20 = $ptrType($Int64);
-	ptrType$21 = $ptrType($Int32);
-	ptrType$27 = $ptrType(mmapper);
+	ptrType$22 = $ptrType($Int64);
+	ptrType$24 = $ptrType(SockaddrLinklayer);
+	ptrType$25 = $ptrType(mmapper);
 	mapType = $mapType(ptrType$2, sliceType);
 	funcType$2 = $funcType([$Uintptr, $Uintptr, $Int, $Int, $Int, $Int64], [$Uintptr, $error], false);
 	funcType$3 = $funcType([$Uintptr, $Uintptr], [$error], false);
-	ptrType$28 = $ptrType(SockaddrInet4);
-	ptrType$29 = $ptrType(SockaddrInet6);
-	ptrType$30 = $ptrType(SockaddrUnix);
-	ptrType$31 = $ptrType(Timespec);
-	arrayType$15 = $arrayType($Int64, 2);
-	ptrType$32 = $ptrType(Msghdr);
+	ptrType$26 = $ptrType(SockaddrInet4);
+	ptrType$27 = $ptrType(SockaddrInet6);
+	ptrType$28 = $ptrType(SockaddrUnix);
+	ptrType$29 = $ptrType(Timespec);
+	arrayType$15 = $arrayType($Int64, 3);
+	ptrType$31 = $ptrType(Msghdr);
 	init = function() {
 		$flushConsole = (function() {
 			if (!((lineBuffer.$length === 0))) {
@@ -3910,7 +3942,7 @@ $packages["syscall"] = (function() {
 			err = _tmp$2;
 			$s = -1; return [r1, r2, err];
 		}
-		if ((trap === 4) && ((a1 === 1) || (a1 === 2))) {
+		if ((trap === 1) && ((a1 === 1) || (a1 === 2))) {
 			array = a2;
 			slice = $makeSlice(sliceType, $parseInt(array.length));
 			slice.$array = array;
@@ -3923,7 +3955,7 @@ $packages["syscall"] = (function() {
 			err = _tmp$5;
 			$s = -1; return [r1, r2, err];
 		}
-		if (trap === 1) {
+		if (trap === 60) {
 			runtime.Goexit();
 		}
 		printWarning();
@@ -4091,10 +4123,10 @@ $packages["syscall"] = (function() {
 			_tuple$2 = direntNamlen(rec);
 			namlen = _tuple$2[0];
 			ok = _tuple$2[1];
-			if (!ok || (x$1 = new $Uint64(0 + namlen.$high, 21 + namlen.$low), x$2 = (new $Uint64(0, rec.$length)), (x$1.$high > x$2.$high || (x$1.$high === x$2.$high && x$1.$low > x$2.$low)))) {
+			if (!ok || (x$1 = new $Uint64(0 + namlen.$high, 19 + namlen.$low), x$2 = (new $Uint64(0, rec.$length)), (x$1.$high > x$2.$high || (x$1.$high === x$2.$high && x$1.$low > x$2.$low)))) {
 				break;
 			}
-			name = $subslice(rec, 21, $flatten64(new $Uint64(0 + namlen.$high, 21 + namlen.$low)));
+			name = $subslice(rec, 19, $flatten64(new $Uint64(0 + namlen.$high, 19 + namlen.$low)));
 			_ref = name;
 			_i = 0;
 			while (true) {
@@ -4145,9 +4177,9 @@ $packages["syscall"] = (function() {
 			$s = -1; return err;
 		}
 		if (nonblocking) {
-			flag = flag | (4);
+			flag = flag | (2048);
 		} else {
-			flag = (flag & ~(4)) >> 0;
+			flag = (flag & ~(2048)) >> 0;
 		}
 		_r$1 = fcntl(fd, 4, flag); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_tuple$1 = _r$1;
@@ -4163,23 +4195,6 @@ $packages["syscall"] = (function() {
 	msanWrite = function(addr, len) {
 		var addr, len;
 	};
-	rsaAlignOf = function(salen) {
-		var salen, salign;
-		salign = 8;
-		if (true) {
-			salign = 4;
-		} else if (false) {
-			salign = 8;
-		} else if (false) {
-			if (freebsdConfArch === "amd64") {
-				salign = 8;
-			}
-		}
-		if (salen === 0) {
-			return salign;
-		}
-		return (((salen + salign >> 0) - 1 >> 0)) & (~((salign - 1 >> 0)) >> 0);
-	};
 	itoa = function(val) {
 		var val;
 		if (val < 0) {
@@ -4189,7 +4204,7 @@ $packages["syscall"] = (function() {
 	};
 	uitoa = function(val) {
 		var _q, _r, buf, i, val;
-		buf = arrayType$10.zero();
+		buf = arrayType$4.zero();
 		i = 31;
 		while (true) {
 			if (!(val >= 10)) { break; }
@@ -4218,29 +4233,14 @@ $packages["syscall"] = (function() {
 		return (x = $mul64((ts.Sec), new $Int64(0, 1000000000)), x$1 = (ts.Nsec), new $Int64(x.$high + x$1.$high, x.$low + x$1.$low));
 	};
 	Timespec.prototype.Nano = function() { return this.$val.Nano(); };
-	ReadDirent = function(fd, buf) {
-		var _r, _tuple, base, buf, err, fd, n, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; base = $f.base; buf = $f.buf; err = $f.err; fd = $f.fd; n = $f.n; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		base = ((new Uint8Array(8)));
-		_r = Getdirentries(fd, buf, base); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		n = _tuple[0];
-		err = _tuple[1];
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: ReadDirent }; } $f._r = _r; $f._tuple = _tuple; $f.base = base; $f.buf = buf; $f.err = err; $f.fd = fd; $f.n = n; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.ReadDirent = ReadDirent;
 	SockaddrInet4.ptr.prototype.sockaddr = function() {
 		var _array, _struct, _view, i, p, sa, x, x$1, x$2;
 		sa = this;
 		if (sa.Port < 0 || sa.Port > 65535) {
 			return [0, 0, new Errno(22)];
 		}
-		sa.raw.Len = 16;
 		sa.raw.Family = 2;
-		p = (((x = sa.raw, (x.$ptr_Port || (x.$ptr_Port = new ptrType$16(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, x))))));
+		p = (((x = sa.raw, (x.$ptr_Port || (x.$ptr_Port = new ptrType$8(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, x))))));
 		p.nilCheck, p[0] = (((sa.Port >> 8 >> 0) << 24 >>> 24));
 		p.nilCheck, p[1] = ((sa.Port << 24 >>> 24));
 		i = 0;
@@ -4250,7 +4250,7 @@ $packages["syscall"] = (function() {
 			i = i + (1) >> 0;
 		}
 		_array = new Uint8Array(16);
-		return [(_array), ((sa.raw.Len >>> 0)), $ifaceNil];
+		return [(_array), 16, $ifaceNil];
 	};
 	SockaddrInet4.prototype.sockaddr = function() { return this.$val.sockaddr(); };
 	SockaddrInet6.ptr.prototype.sockaddr = function() {
@@ -4259,9 +4259,8 @@ $packages["syscall"] = (function() {
 		if (sa.Port < 0 || sa.Port > 65535) {
 			return [0, 0, new Errno(22)];
 		}
-		sa.raw.Len = 28;
-		sa.raw.Family = 30;
-		p = (((x = sa.raw, (x.$ptr_Port || (x.$ptr_Port = new ptrType$16(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, x))))));
+		sa.raw.Family = 10;
+		p = (((x = sa.raw, (x.$ptr_Port || (x.$ptr_Port = new ptrType$8(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, x))))));
 		p.nilCheck, p[0] = (((sa.Port >> 8 >> 0) << 24 >>> 24));
 		p.nilCheck, p[1] = ((sa.Port << 24 >>> 24));
 		sa.raw.Scope_id = sa.ZoneId;
@@ -4272,18 +4271,17 @@ $packages["syscall"] = (function() {
 			i = i + (1) >> 0;
 		}
 		_array = new Uint8Array(28);
-		return [(_array), ((sa.raw.Len >>> 0)), $ifaceNil];
+		return [(_array), 28, $ifaceNil];
 	};
 	SockaddrInet6.prototype.sockaddr = function() { return this.$val.sockaddr(); };
 	SockaddrUnix.ptr.prototype.sockaddr = function() {
-		var _array, _struct, _view, i, n, name, sa, x;
+		var _array, _struct, _view, i, n, name, sa, sl, x;
 		sa = this;
 		name = sa.Name;
 		n = name.length;
-		if (n >= 104 || (n === 0)) {
+		if (n >= 108) {
 			return [0, 0, new Errno(22)];
 		}
-		sa.raw.Len = (((3 + n >> 0) << 24 >>> 24));
 		sa.raw.Family = 1;
 		i = 0;
 		while (true) {
@@ -4291,152 +4289,206 @@ $packages["syscall"] = (function() {
 			(x = sa.raw.Path, ((i < 0 || i >= x.length) ? ($throwRuntimeError("index out of range"), undefined) : x[i] = ((name.charCodeAt(i) << 24 >> 24))));
 			i = i + (1) >> 0;
 		}
-		_array = new Uint8Array(106);
-		return [(_array), ((sa.raw.Len >>> 0)), $ifaceNil];
+		sl = 2;
+		if (n > 0) {
+			sl = sl + ((((n >>> 0)) + 1 >>> 0)) >>> 0;
+		}
+		if (sa.raw.Path[0] === 64) {
+			sa.raw.Path[0] = 0;
+			sl = sl - (1) >>> 0;
+		}
+		_array = new Uint8Array(110);
+		return [(_array), sl, $ifaceNil];
 	};
 	SockaddrUnix.prototype.sockaddr = function() { return this.$val.sockaddr(); };
-	SockaddrDatalink.ptr.prototype.sockaddr = function() {
+	SockaddrLinklayer.ptr.prototype.sockaddr = function() {
 		var _array, _struct, _view, i, sa, x, x$1;
 		sa = this;
-		if (sa.Index === 0) {
+		if (sa.Ifindex < 0 || sa.Ifindex > 2147483647) {
 			return [0, 0, new Errno(22)];
 		}
-		sa.raw.Len = sa.Len;
-		sa.raw.Family = 18;
-		sa.raw.Index = sa.Index;
-		sa.raw.Type = sa.Type;
-		sa.raw.Nlen = sa.Nlen;
-		sa.raw.Alen = sa.Alen;
-		sa.raw.Slen = sa.Slen;
+		sa.raw.Family = 17;
+		sa.raw.Protocol = sa.Protocol;
+		sa.raw.Ifindex = ((sa.Ifindex >> 0));
+		sa.raw.Hatype = sa.Hatype;
+		sa.raw.Pkttype = sa.Pkttype;
+		sa.raw.Halen = sa.Halen;
 		i = 0;
 		while (true) {
-			if (!(i < 12)) { break; }
-			(x$1 = sa.raw.Data, ((i < 0 || i >= x$1.length) ? ($throwRuntimeError("index out of range"), undefined) : x$1[i] = (x = sa.Data, ((i < 0 || i >= x.length) ? ($throwRuntimeError("index out of range"), undefined) : x[i]))));
+			if (!(i < 8)) { break; }
+			(x$1 = sa.raw.Addr, ((i < 0 || i >= x$1.length) ? ($throwRuntimeError("index out of range"), undefined) : x$1[i] = (x = sa.Addr, ((i < 0 || i >= x.length) ? ($throwRuntimeError("index out of range"), undefined) : x[i]))));
 			i = i + (1) >> 0;
 		}
 		_array = new Uint8Array(20);
 		return [(_array), 20, $ifaceNil];
 	};
-	SockaddrDatalink.prototype.sockaddr = function() { return this.$val.sockaddr(); };
+	SockaddrLinklayer.prototype.sockaddr = function() { return this.$val.sockaddr(); };
+	SockaddrNetlink.ptr.prototype.sockaddr = function() {
+		var _array, _struct, _view, sa;
+		sa = this;
+		sa.raw.Family = 16;
+		sa.raw.Pad = sa.Pad;
+		sa.raw.Pid = sa.Pid;
+		sa.raw.Groups = sa.Groups;
+		_array = new Uint8Array(12);
+		return [(_array), 12, $ifaceNil];
+	};
+	SockaddrNetlink.prototype.sockaddr = function() { return this.$val.sockaddr(); };
 	anyToSockaddr = function(rsa) {
-		var _1, _array, _array$1, _array$2, _array$3, _array$4, _array$5, _array$6, _array$7, _struct, _struct$1, _struct$2, _struct$3, _struct$4, _struct$5, _struct$6, _struct$7, _view, _view$1, _view$2, _view$3, _view$4, _view$5, _view$6, _view$7, bytes, i, i$1, i$2, i$3, n, p, p$1, pp, pp$1, pp$2, pp$3, rsa, sa, sa$1, sa$2, sa$3, x, x$1, x$2, x$3, x$4, x$5, x$6;
+		var _1, _array, _array$1, _array$2, _array$3, _array$4, _array$5, _array$6, _array$7, _array$8, _array$9, _struct, _struct$1, _struct$2, _struct$3, _struct$4, _struct$5, _struct$6, _struct$7, _struct$8, _struct$9, _view, _view$1, _view$2, _view$3, _view$4, _view$5, _view$6, _view$7, _view$8, _view$9, bytes, i, i$1, i$2, n, p, p$1, pp, pp$1, pp$2, pp$3, pp$4, rsa, sa, sa$1, sa$2, sa$3, sa$4, x, x$1, x$2, x$3, x$4, x$5, x$6;
 		_1 = rsa.Addr.Family;
-		if (_1 === (18)) {
-			_array$1 = new Uint8Array(108);
-			pp = ((_array = (_array$1), _struct = new RawSockaddrDatalink.ptr(0, 0, 0, 0, 0, 0, 0, arrayType$3.zero()), _view = new DataView(_array.buffer, _array.byteOffset), _struct.Len = _view.getUint8(0, true), _struct.Family = _view.getUint8(1, true), _struct.Index = _view.getUint16(2, true), _struct.Type = _view.getUint8(4, true), _struct.Nlen = _view.getUint8(5, true), _struct.Alen = _view.getUint8(6, true), _struct.Slen = _view.getUint8(7, true), _struct.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 8, _array.buffer.byteLength)), _struct));
-			_struct$1 = rsa, _view$1 = new DataView(_array$1.buffer, _array$1.byteOffset), _struct$1.Addr.Len = _view$1.getUint8(0, true), _struct$1.Addr.Family = _view$1.getUint8(1, true), _struct$1.Addr.Data = new ($nativeArray($kindInt8))(_array$1.buffer, $min(_array$1.byteOffset + 2, _array$1.buffer.byteLength)), _struct$1.Pad = new ($nativeArray($kindInt8))(_array$1.buffer, $min(_array$1.byteOffset + 16, _array$1.buffer.byteLength));
-			sa = new SockaddrDatalink.ptr(0, 0, 0, 0, 0, 0, 0, arrayType$3.zero(), new RawSockaddrDatalink.ptr(0, 0, 0, 0, 0, 0, 0, arrayType$3.zero()));
-			sa.Len = pp.Len;
+		if (_1 === (16)) {
+			_array$1 = new Uint8Array(112);
+			pp = ((_array = (_array$1), _struct = new RawSockaddrNetlink.ptr(0, 0, 0, 0), _view = new DataView(_array.buffer, _array.byteOffset), _struct.Family = _view.getUint16(0, true), _struct.Pad = _view.getUint16(2, true), _struct.Pid = _view.getUint32(4, true), _struct.Groups = _view.getUint32(8, true), _struct));
+			_struct$1 = rsa, _view$1 = new DataView(_array$1.buffer, _array$1.byteOffset), _struct$1.Addr.Family = _view$1.getUint16(0, true), _struct$1.Addr.Data = new ($nativeArray($kindInt8))(_array$1.buffer, $min(_array$1.byteOffset + 2, _array$1.buffer.byteLength)), _struct$1.Pad = new ($nativeArray($kindInt8))(_array$1.buffer, $min(_array$1.byteOffset + 16, _array$1.buffer.byteLength));
+			sa = new SockaddrNetlink.ptr(0, 0, 0, 0, new RawSockaddrNetlink.ptr(0, 0, 0, 0));
 			sa.Family = pp.Family;
-			sa.Index = pp.Index;
-			sa.Type = pp.Type;
-			sa.Nlen = pp.Nlen;
-			sa.Alen = pp.Alen;
-			sa.Slen = pp.Slen;
+			sa.Pad = pp.Pad;
+			sa.Pid = pp.Pid;
+			sa.Groups = pp.Groups;
+			return [sa, $ifaceNil];
+		} else if (_1 === (17)) {
+			_array$3 = new Uint8Array(112);
+			pp$1 = ((_array$2 = (_array$3), _struct$2 = new RawSockaddrLinklayer.ptr(0, 0, 0, 0, 0, 0, arrayType$1.zero()), _view$2 = new DataView(_array$2.buffer, _array$2.byteOffset), _struct$2.Family = _view$2.getUint16(0, true), _struct$2.Protocol = _view$2.getUint16(2, true), _struct$2.Ifindex = _view$2.getInt32(4, true), _struct$2.Hatype = _view$2.getUint16(8, true), _struct$2.Pkttype = _view$2.getUint8(10, true), _struct$2.Halen = _view$2.getUint8(11, true), _struct$2.Addr = new ($nativeArray($kindUint8))(_array$2.buffer, $min(_array$2.byteOffset + 12, _array$2.buffer.byteLength)), _struct$2));
+			_struct$3 = rsa, _view$3 = new DataView(_array$3.buffer, _array$3.byteOffset), _struct$3.Addr.Family = _view$3.getUint16(0, true), _struct$3.Addr.Data = new ($nativeArray($kindInt8))(_array$3.buffer, $min(_array$3.byteOffset + 2, _array$3.buffer.byteLength)), _struct$3.Pad = new ($nativeArray($kindInt8))(_array$3.buffer, $min(_array$3.byteOffset + 16, _array$3.buffer.byteLength));
+			sa$1 = new SockaddrLinklayer.ptr(0, 0, 0, 0, 0, arrayType$1.zero(), new RawSockaddrLinklayer.ptr(0, 0, 0, 0, 0, 0, arrayType$1.zero()));
+			sa$1.Protocol = pp$1.Protocol;
+			sa$1.Ifindex = ((pp$1.Ifindex >> 0));
+			sa$1.Hatype = pp$1.Hatype;
+			sa$1.Pkttype = pp$1.Pkttype;
+			sa$1.Halen = pp$1.Halen;
 			i = 0;
 			while (true) {
-				if (!(i < 12)) { break; }
-				(x$1 = sa.Data, ((i < 0 || i >= x$1.length) ? ($throwRuntimeError("index out of range"), undefined) : x$1[i] = (x = pp.Data, ((i < 0 || i >= x.length) ? ($throwRuntimeError("index out of range"), undefined) : x[i]))));
+				if (!(i < 8)) { break; }
+				(x$1 = sa$1.Addr, ((i < 0 || i >= x$1.length) ? ($throwRuntimeError("index out of range"), undefined) : x$1[i] = (x = pp$1.Addr, ((i < 0 || i >= x.length) ? ($throwRuntimeError("index out of range"), undefined) : x[i]))));
 				i = i + (1) >> 0;
 			}
-			return [sa, $ifaceNil];
+			return [sa$1, $ifaceNil];
 		} else if (_1 === (1)) {
-			_array$3 = new Uint8Array(108);
-			pp$1 = ((_array$2 = (_array$3), _struct$2 = new RawSockaddrUnix.ptr(0, 0, arrayType$11.zero()), _view$2 = new DataView(_array$2.buffer, _array$2.byteOffset), _struct$2.Len = _view$2.getUint8(0, true), _struct$2.Family = _view$2.getUint8(1, true), _struct$2.Path = new ($nativeArray($kindInt8))(_array$2.buffer, $min(_array$2.byteOffset + 2, _array$2.buffer.byteLength)), _struct$2));
-			_struct$3 = rsa, _view$3 = new DataView(_array$3.buffer, _array$3.byteOffset), _struct$3.Addr.Len = _view$3.getUint8(0, true), _struct$3.Addr.Family = _view$3.getUint8(1, true), _struct$3.Addr.Data = new ($nativeArray($kindInt8))(_array$3.buffer, $min(_array$3.byteOffset + 2, _array$3.buffer.byteLength)), _struct$3.Pad = new ($nativeArray($kindInt8))(_array$3.buffer, $min(_array$3.byteOffset + 16, _array$3.buffer.byteLength));
-			if (pp$1.Len < 2 || pp$1.Len > 106) {
-				return [$ifaceNil, new Errno(22)];
+			_array$5 = new Uint8Array(112);
+			pp$2 = ((_array$4 = (_array$5), _struct$4 = new RawSockaddrUnix.ptr(0, arrayType$7.zero()), _view$4 = new DataView(_array$4.buffer, _array$4.byteOffset), _struct$4.Family = _view$4.getUint16(0, true), _struct$4.Path = new ($nativeArray($kindInt8))(_array$4.buffer, $min(_array$4.byteOffset + 2, _array$4.buffer.byteLength)), _struct$4));
+			_struct$5 = rsa, _view$5 = new DataView(_array$5.buffer, _array$5.byteOffset), _struct$5.Addr.Family = _view$5.getUint16(0, true), _struct$5.Addr.Data = new ($nativeArray($kindInt8))(_array$5.buffer, $min(_array$5.byteOffset + 2, _array$5.buffer.byteLength)), _struct$5.Pad = new ($nativeArray($kindInt8))(_array$5.buffer, $min(_array$5.byteOffset + 16, _array$5.buffer.byteLength));
+			sa$2 = new SockaddrUnix.ptr("", new RawSockaddrUnix.ptr(0, arrayType$7.zero()));
+			if (pp$2.Path[0] === 0) {
+				pp$2.Path[0] = 64;
 			}
-			sa$1 = new SockaddrUnix.ptr("", new RawSockaddrUnix.ptr(0, 0, arrayType$11.zero()));
-			n = ((pp$1.Len >> 0)) - 2 >> 0;
+			n = 0;
+			while (true) {
+				if (!(n < 108 && !(((x$2 = pp$2.Path, ((n < 0 || n >= x$2.length) ? ($throwRuntimeError("index out of range"), undefined) : x$2[n])) === 0)))) { break; }
+				n = n + (1) >> 0;
+			}
+			bytes = $subslice(new sliceType((($sliceToArray(new sliceType(pp$2.Path))))), 0, n);
+			sa$2.Name = ($bytesToString(bytes));
+			return [sa$2, $ifaceNil];
+		} else if (_1 === (2)) {
+			_array$7 = new Uint8Array(112);
+			pp$3 = ((_array$6 = (_array$7), _struct$6 = new RawSockaddrInet4.ptr(0, 0, arrayType$8.zero(), arrayType$1.zero()), _view$6 = new DataView(_array$6.buffer, _array$6.byteOffset), _struct$6.Family = _view$6.getUint16(0, true), _struct$6.Port = _view$6.getUint16(2, true), _struct$6.Addr = new ($nativeArray($kindUint8))(_array$6.buffer, $min(_array$6.byteOffset + 4, _array$6.buffer.byteLength)), _struct$6.Zero = new ($nativeArray($kindUint8))(_array$6.buffer, $min(_array$6.byteOffset + 8, _array$6.buffer.byteLength)), _struct$6));
+			_struct$7 = rsa, _view$7 = new DataView(_array$7.buffer, _array$7.byteOffset), _struct$7.Addr.Family = _view$7.getUint16(0, true), _struct$7.Addr.Data = new ($nativeArray($kindInt8))(_array$7.buffer, $min(_array$7.byteOffset + 2, _array$7.buffer.byteLength)), _struct$7.Pad = new ($nativeArray($kindInt8))(_array$7.buffer, $min(_array$7.byteOffset + 16, _array$7.buffer.byteLength));
+			sa$3 = new SockaddrInet4.ptr(0, arrayType$8.zero(), new RawSockaddrInet4.ptr(0, 0, arrayType$8.zero(), arrayType$1.zero()));
+			p = (((pp$3.$ptr_Port || (pp$3.$ptr_Port = new ptrType$8(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, pp$3)))));
+			sa$3.Port = ((((p.nilCheck, p[0]) >> 0)) << 8 >> 0) + (((p.nilCheck, p[1]) >> 0)) >> 0;
 			i$1 = 0;
 			while (true) {
-				if (!(i$1 < n)) { break; }
-				if ((x$2 = pp$1.Path, ((i$1 < 0 || i$1 >= x$2.length) ? ($throwRuntimeError("index out of range"), undefined) : x$2[i$1])) === 0) {
-					n = i$1;
-					break;
-				}
+				if (!(i$1 < 4)) { break; }
+				(x$4 = sa$3.Addr, ((i$1 < 0 || i$1 >= x$4.length) ? ($throwRuntimeError("index out of range"), undefined) : x$4[i$1] = (x$3 = pp$3.Addr, ((i$1 < 0 || i$1 >= x$3.length) ? ($throwRuntimeError("index out of range"), undefined) : x$3[i$1]))));
 				i$1 = i$1 + (1) >> 0;
 			}
-			bytes = $subslice(new sliceType((($sliceToArray(new sliceType(pp$1.Path))))), 0, n);
-			sa$1.Name = ($bytesToString(bytes));
-			return [sa$1, $ifaceNil];
-		} else if (_1 === (2)) {
-			_array$5 = new Uint8Array(108);
-			pp$2 = ((_array$4 = (_array$5), _struct$4 = new RawSockaddrInet4.ptr(0, 0, 0, arrayType$1.zero(), arrayType$6.zero()), _view$4 = new DataView(_array$4.buffer, _array$4.byteOffset), _struct$4.Len = _view$4.getUint8(0, true), _struct$4.Family = _view$4.getUint8(1, true), _struct$4.Port = _view$4.getUint16(2, true), _struct$4.Addr = new ($nativeArray($kindUint8))(_array$4.buffer, $min(_array$4.byteOffset + 4, _array$4.buffer.byteLength)), _struct$4.Zero = new ($nativeArray($kindInt8))(_array$4.buffer, $min(_array$4.byteOffset + 8, _array$4.buffer.byteLength)), _struct$4));
-			_struct$5 = rsa, _view$5 = new DataView(_array$5.buffer, _array$5.byteOffset), _struct$5.Addr.Len = _view$5.getUint8(0, true), _struct$5.Addr.Family = _view$5.getUint8(1, true), _struct$5.Addr.Data = new ($nativeArray($kindInt8))(_array$5.buffer, $min(_array$5.byteOffset + 2, _array$5.buffer.byteLength)), _struct$5.Pad = new ($nativeArray($kindInt8))(_array$5.buffer, $min(_array$5.byteOffset + 16, _array$5.buffer.byteLength));
-			sa$2 = new SockaddrInet4.ptr(0, arrayType$1.zero(), new RawSockaddrInet4.ptr(0, 0, 0, arrayType$1.zero(), arrayType$6.zero()));
-			p = (((pp$2.$ptr_Port || (pp$2.$ptr_Port = new ptrType$16(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, pp$2)))));
-			sa$2.Port = ((((p.nilCheck, p[0]) >> 0)) << 8 >> 0) + (((p.nilCheck, p[1]) >> 0)) >> 0;
+			return [sa$3, $ifaceNil];
+		} else if (_1 === (10)) {
+			_array$9 = new Uint8Array(112);
+			pp$4 = ((_array$8 = (_array$9), _struct$8 = new RawSockaddrInet6.ptr(0, 0, 0, arrayType$2.zero(), 0), _view$8 = new DataView(_array$8.buffer, _array$8.byteOffset), _struct$8.Family = _view$8.getUint16(0, true), _struct$8.Port = _view$8.getUint16(2, true), _struct$8.Flowinfo = _view$8.getUint32(4, true), _struct$8.Addr = new ($nativeArray($kindUint8))(_array$8.buffer, $min(_array$8.byteOffset + 8, _array$8.buffer.byteLength)), _struct$8.Scope_id = _view$8.getUint32(24, true), _struct$8));
+			_struct$9 = rsa, _view$9 = new DataView(_array$9.buffer, _array$9.byteOffset), _struct$9.Addr.Family = _view$9.getUint16(0, true), _struct$9.Addr.Data = new ($nativeArray($kindInt8))(_array$9.buffer, $min(_array$9.byteOffset + 2, _array$9.buffer.byteLength)), _struct$9.Pad = new ($nativeArray($kindInt8))(_array$9.buffer, $min(_array$9.byteOffset + 16, _array$9.buffer.byteLength));
+			sa$4 = new SockaddrInet6.ptr(0, 0, arrayType$2.zero(), new RawSockaddrInet6.ptr(0, 0, 0, arrayType$2.zero(), 0));
+			p$1 = (((pp$4.$ptr_Port || (pp$4.$ptr_Port = new ptrType$8(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, pp$4)))));
+			sa$4.Port = ((((p$1.nilCheck, p$1[0]) >> 0)) << 8 >> 0) + (((p$1.nilCheck, p$1[1]) >> 0)) >> 0;
+			sa$4.ZoneId = pp$4.Scope_id;
 			i$2 = 0;
 			while (true) {
-				if (!(i$2 < 4)) { break; }
-				(x$4 = sa$2.Addr, ((i$2 < 0 || i$2 >= x$4.length) ? ($throwRuntimeError("index out of range"), undefined) : x$4[i$2] = (x$3 = pp$2.Addr, ((i$2 < 0 || i$2 >= x$3.length) ? ($throwRuntimeError("index out of range"), undefined) : x$3[i$2]))));
+				if (!(i$2 < 16)) { break; }
+				(x$6 = sa$4.Addr, ((i$2 < 0 || i$2 >= x$6.length) ? ($throwRuntimeError("index out of range"), undefined) : x$6[i$2] = (x$5 = pp$4.Addr, ((i$2 < 0 || i$2 >= x$5.length) ? ($throwRuntimeError("index out of range"), undefined) : x$5[i$2]))));
 				i$2 = i$2 + (1) >> 0;
 			}
-			return [sa$2, $ifaceNil];
-		} else if (_1 === (30)) {
-			_array$7 = new Uint8Array(108);
-			pp$3 = ((_array$6 = (_array$7), _struct$6 = new RawSockaddrInet6.ptr(0, 0, 0, 0, arrayType.zero(), 0), _view$6 = new DataView(_array$6.buffer, _array$6.byteOffset), _struct$6.Len = _view$6.getUint8(0, true), _struct$6.Family = _view$6.getUint8(1, true), _struct$6.Port = _view$6.getUint16(2, true), _struct$6.Flowinfo = _view$6.getUint32(4, true), _struct$6.Addr = new ($nativeArray($kindUint8))(_array$6.buffer, $min(_array$6.byteOffset + 8, _array$6.buffer.byteLength)), _struct$6.Scope_id = _view$6.getUint32(24, true), _struct$6));
-			_struct$7 = rsa, _view$7 = new DataView(_array$7.buffer, _array$7.byteOffset), _struct$7.Addr.Len = _view$7.getUint8(0, true), _struct$7.Addr.Family = _view$7.getUint8(1, true), _struct$7.Addr.Data = new ($nativeArray($kindInt8))(_array$7.buffer, $min(_array$7.byteOffset + 2, _array$7.buffer.byteLength)), _struct$7.Pad = new ($nativeArray($kindInt8))(_array$7.buffer, $min(_array$7.byteOffset + 16, _array$7.buffer.byteLength));
-			sa$3 = new SockaddrInet6.ptr(0, 0, arrayType.zero(), new RawSockaddrInet6.ptr(0, 0, 0, 0, arrayType.zero(), 0));
-			p$1 = (((pp$3.$ptr_Port || (pp$3.$ptr_Port = new ptrType$16(function() { return this.$target.Port; }, function($v) { this.$target.Port = $v; }, pp$3)))));
-			sa$3.Port = ((((p$1.nilCheck, p$1[0]) >> 0)) << 8 >> 0) + (((p$1.nilCheck, p$1[1]) >> 0)) >> 0;
-			sa$3.ZoneId = pp$3.Scope_id;
-			i$3 = 0;
-			while (true) {
-				if (!(i$3 < 16)) { break; }
-				(x$6 = sa$3.Addr, ((i$3 < 0 || i$3 >= x$6.length) ? ($throwRuntimeError("index out of range"), undefined) : x$6[i$3] = (x$5 = pp$3.Addr, ((i$3 < 0 || i$3 >= x$5.length) ? ($throwRuntimeError("index out of range"), undefined) : x$5[i$3]))));
-				i$3 = i$3 + (1) >> 0;
-			}
-			return [sa$3, $ifaceNil];
+			return [sa$4, $ifaceNil];
 		}
-		return [$ifaceNil, new Errno(47)];
+		return [$ifaceNil, new Errno(97)];
 	};
 	Accept = function(fd) {
-		var _r, _r$1, _r$2, _tmp, _tmp$1, _tmp$2, _tuple, _tuple$1, err, fd, len, nfd, rsa, sa, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; fd = $f.fd; len = $f.len; nfd = $f.nfd; rsa = $f.rsa; sa = $f.sa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, _r$1, _tuple, _tuple$1, err, fd, len, nfd, rsa, sa, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; fd = $f.fd; len = $f.len; nfd = $f.nfd; rsa = $f.rsa; sa = $f.sa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		len = [len];
 		rsa = [rsa];
 		nfd = 0;
 		sa = $ifaceNil;
 		err = $ifaceNil;
-		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, 0, arrayType$4.zero()), arrayType$5.zero());
-		len[0] = 108;
-		_r = accept(fd, rsa[0], (len.$ptr || (len.$ptr = new ptrType$17(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, len)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, arrayType$9.zero()), arrayType$10.zero());
+		len[0] = 112;
+		_r = accept(fd, rsa[0], (len.$ptr || (len.$ptr = new ptrType$18(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, len)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		nfd = _tuple[0];
 		err = _tuple[1];
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
 			$s = -1; return [nfd, sa, err];
 		}
-		/* */ if (true && (len[0] === 0)) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if (true && (len[0] === 0)) { */ case 2:
-			_r$1 = Close(nfd); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			_r$1;
-			_tmp = 0;
-			_tmp$1 = $ifaceNil;
-			_tmp$2 = new Errno(53);
-			nfd = _tmp;
-			sa = _tmp$1;
-			err = _tmp$2;
-			$s = -1; return [nfd, sa, err];
-		/* } */ case 3:
 		_tuple$1 = anyToSockaddr(rsa[0]);
 		sa = _tuple$1[0];
 		err = _tuple$1[1];
-		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 5; continue; }
-		/* */ $s = 6; continue;
-		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 5:
-			_r$2 = Close(nfd); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			_r$2;
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
+			_r$1 = Close(nfd); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			_r$1;
 			nfd = 0;
-		/* } */ case 6:
+		/* } */ case 3:
 		$s = -1; return [nfd, sa, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Accept }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.fd = fd; $f.len = len; $f.nfd = nfd; $f.rsa = rsa; $f.sa = sa; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Accept }; } $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.fd = fd; $f.len = len; $f.nfd = nfd; $f.rsa = rsa; $f.sa = sa; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Accept = Accept;
+	Accept4 = function(fd, flags) {
+		var _r, _r$1, _tuple, _tuple$1, err, fd, flags, len, nfd, rsa, sa, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; fd = $f.fd; flags = $f.flags; len = $f.len; nfd = $f.nfd; rsa = $f.rsa; sa = $f.sa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		len = [len];
+		rsa = [rsa];
+		nfd = 0;
+		sa = $ifaceNil;
+		err = $ifaceNil;
+		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, arrayType$9.zero()), arrayType$10.zero());
+		len[0] = 112;
+		_r = accept4(fd, rsa[0], (len.$ptr || (len.$ptr = new ptrType$18(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, len))), flags); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		nfd = _tuple[0];
+		err = _tuple[1];
+		if (!($interfaceIsEqual(err, $ifaceNil))) {
+			$s = -1; return [nfd, sa, err];
+		}
+		if (len[0] > 112) {
+			$panic(new $String("RawSockaddrAny too small"));
+		}
+		_tuple$1 = anyToSockaddr(rsa[0]);
+		sa = _tuple$1[0];
+		err = _tuple$1[1];
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 2:
+			_r$1 = Close(nfd); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			_r$1;
+			nfd = 0;
+		/* } */ case 3:
+		$s = -1; return [nfd, sa, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Accept4 }; } $f._r = _r; $f._r$1 = _r$1; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.fd = fd; $f.flags = flags; $f.len = len; $f.nfd = nfd; $f.rsa = rsa; $f.sa = sa; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Accept4 = Accept4;
+	SetsockoptIPMreqn = function(fd, level, opt, mreq) {
+		var _array, _r, _struct, _view, err, fd, level, mreq, opt, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _view = $f._view; err = $f.err; fd = $f.fd; level = $f.level; mreq = $f.mreq; opt = $f.opt; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		err = $ifaceNil;
+		_array = new Uint8Array(12);
+		_r = setsockopt(fd, level, opt, (_array), 12); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = mreq, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Multiaddr = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 0, _array.buffer.byteLength)), _struct.Address = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 4, _array.buffer.byteLength)), _struct.Ifindex = _view.getInt32(8, true);
+		err = _r;
+		$s = -1; return err;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: SetsockoptIPMreqn }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._view = _view; $f.err = err; $f.fd = fd; $f.level = level; $f.mreq = mreq; $f.opt = opt; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.SetsockoptIPMreqn = SetsockoptIPMreqn;
 	Recvmsg = function(fd, p, oob, flags) {
 		var _array, _r, _struct, _tuple, _tuple$1, _view, dummy, err, fd, flags, from, iov, msg, n, oob, oobn, p, recvflags, rsa, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _view = $f._view; dummy = $f.dummy; err = $f.err; fd = $f.fd; flags = $f.flags; from = $f.from; iov = $f.iov; msg = $f.msg; n = $f.n; oob = $f.oob; oobn = $f.oobn; p = $f.p; recvflags = $f.recvflags; rsa = $f.rsa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -4449,12 +4501,12 @@ $packages["syscall"] = (function() {
 		recvflags = 0;
 		from = $ifaceNil;
 		err = $ifaceNil;
-		msg[0] = new Msghdr.ptr(ptrType$2.nil, 0, arrayType$1.zero(), ptrType$18.nil, 0, arrayType$1.zero(), ptrType$2.nil, 0, 0);
-		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, 0, arrayType$4.zero()), arrayType$5.zero());
-		_array = new Uint8Array(108);
+		msg[0] = new Msghdr.ptr(ptrType$2.nil, 0, arrayType$8.zero(), ptrType$19.nil, new $Uint64(0, 0), ptrType$2.nil, new $Uint64(0, 0), 0, arrayType$8.zero());
+		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, arrayType$9.zero()), arrayType$10.zero());
+		_array = new Uint8Array(112);
 		msg[0].Name = ((_array));
-		_struct = rsa[0], _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Len = _view.getUint8(0, true), _struct.Addr.Family = _view.getUint8(1, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
-		msg[0].Namelen = 108;
+		_struct = rsa[0], _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Family = _view.getUint16(0, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
+		msg[0].Namelen = 112;
 		iov[0] = new Iovec.ptr(ptrType$2.nil, new $Uint64(0, 0));
 		if (p.$length > 0) {
 			iov[0].Base = (($sliceToArray(p)));
@@ -4470,7 +4522,7 @@ $packages["syscall"] = (function() {
 			msg[0].SetControllen(oob.$length);
 		}
 		msg[0].Iov = iov[0];
-		msg[0].Iovlen = 1;
+		msg[0].Iovlen = new $Uint64(0, 1);
 		_r = recvmsg(fd, msg[0], flags); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		n = _tuple[0];
@@ -4478,7 +4530,7 @@ $packages["syscall"] = (function() {
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
 			$s = -1; return [n, oobn, recvflags, from, err];
 		}
-		oobn = ((msg[0].Controllen >> 0));
+		oobn = ((msg[0].Controllen.$low >> 0));
 		recvflags = ((msg[0].Flags >> 0));
 		if (!((rsa[0].Addr.Family === 0))) {
 			_tuple$1 = anyToSockaddr(rsa[0]);
@@ -4490,8 +4542,8 @@ $packages["syscall"] = (function() {
 	};
 	$pkg.Recvmsg = Recvmsg;
 	SendmsgN = function(fd, p, oob, to, flags) {
-		var _r, _r$1, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tuple, _tuple$1, dummy, err, fd, flags, iov, msg, n, oob, p, ptr, salen, to, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; dummy = $f.dummy; err = $f.err; fd = $f.fd; flags = $f.flags; iov = $f.iov; msg = $f.msg; n = $f.n; oob = $f.oob; p = $f.p; ptr = $f.ptr; salen = $f.salen; to = $f.to; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, _r$1, _tmp, _tmp$1, _tmp$2, _tmp$3, _tmp$4, _tmp$5, _tuple, _tuple$1, dummy, err, err$1, fd, flags, iov, msg, n, oob, p, ptr, salen, to, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _tmp = $f._tmp; _tmp$1 = $f._tmp$1; _tmp$2 = $f._tmp$2; _tmp$3 = $f._tmp$3; _tmp$4 = $f._tmp$4; _tmp$5 = $f._tmp$5; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; dummy = $f.dummy; err = $f.err; err$1 = $f.err$1; fd = $f.fd; flags = $f.flags; iov = $f.iov; msg = $f.msg; n = $f.n; oob = $f.oob; p = $f.p; ptr = $f.ptr; salen = $f.salen; to = $f.to; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		dummy = [dummy];
 		iov = [iov];
 		msg = [msg];
@@ -4502,20 +4554,21 @@ $packages["syscall"] = (function() {
 		/* */ if (!($interfaceIsEqual(to, $ifaceNil))) { $s = 1; continue; }
 		/* */ $s = 2; continue;
 		/* if (!($interfaceIsEqual(to, $ifaceNil))) { */ case 1:
+			err$1 = $ifaceNil;
 			_r = to.sockaddr(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			_tuple = _r;
 			ptr = _tuple[0];
 			salen = _tuple[1];
-			err = _tuple[2];
-			if (!($interfaceIsEqual(err, $ifaceNil))) {
+			err$1 = _tuple[2];
+			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
 				_tmp = 0;
-				_tmp$1 = err;
+				_tmp$1 = err$1;
 				n = _tmp;
 				err = _tmp$1;
 				$s = -1; return [n, err];
 			}
 		/* } */ case 2:
-		msg[0] = new Msghdr.ptr(ptrType$2.nil, 0, arrayType$1.zero(), ptrType$18.nil, 0, arrayType$1.zero(), ptrType$2.nil, 0, 0);
+		msg[0] = new Msghdr.ptr(ptrType$2.nil, 0, arrayType$8.zero(), ptrType$19.nil, new $Uint64(0, 0), ptrType$2.nil, new $Uint64(0, 0), 0, arrayType$8.zero());
 		msg[0].Name = ((ptr));
 		msg[0].Namelen = ((salen >>> 0));
 		iov[0] = new Iovec.ptr(ptrType$2.nil, new $Uint64(0, 0));
@@ -4533,7 +4586,7 @@ $packages["syscall"] = (function() {
 			msg[0].SetControllen(oob.$length);
 		}
 		msg[0].Iov = iov[0];
-		msg[0].Iovlen = 1;
+		msg[0].Iovlen = new $Uint64(0, 1);
 		_r$1 = sendmsg(fd, msg[0], flags); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_tuple$1 = _r$1;
 		n = _tuple$1[0];
@@ -4553,9 +4606,22 @@ $packages["syscall"] = (function() {
 		n = _tmp$4;
 		err = _tmp$5;
 		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: SendmsgN }; } $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.dummy = dummy; $f.err = err; $f.fd = fd; $f.flags = flags; $f.iov = iov; $f.msg = msg; $f.n = n; $f.oob = oob; $f.p = p; $f.ptr = ptr; $f.salen = salen; $f.to = to; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: SendmsgN }; } $f._r = _r; $f._r$1 = _r$1; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tmp$2 = _tmp$2; $f._tmp$3 = _tmp$3; $f._tmp$4 = _tmp$4; $f._tmp$5 = _tmp$5; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.dummy = dummy; $f.err = err; $f.err$1 = err$1; $f.fd = fd; $f.flags = flags; $f.iov = iov; $f.msg = msg; $f.n = n; $f.oob = oob; $f.p = p; $f.ptr = ptr; $f.salen = salen; $f.to = to; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.SendmsgN = SendmsgN;
+	ReadDirent = function(fd, buf) {
+		var _r, _tuple, buf, err, fd, n, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; buf = $f.buf; err = $f.err; fd = $f.fd; n = $f.n; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_r = Getdents(fd, buf); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		n = _tuple[0];
+		err = _tuple[1];
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: ReadDirent }; } $f._r = _r; $f._tuple = _tuple; $f.buf = buf; $f.err = err; $f.fd = fd; $f.n = n; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.ReadDirent = ReadDirent;
 	direntIno = function(buf) {
 		var buf;
 		return readInt(buf, 0, 8);
@@ -4565,8 +4631,14 @@ $packages["syscall"] = (function() {
 		return readInt(buf, 16, 2);
 	};
 	direntNamlen = function(buf) {
-		var buf;
-		return readInt(buf, 18, 2);
+		var _tuple, buf, ok, reclen;
+		_tuple = direntReclen(buf);
+		reclen = _tuple[0];
+		ok = _tuple[1];
+		if (!ok) {
+			return [new $Uint64(0, 0), false];
+		}
+		return [new $Uint64(reclen.$high - 0, reclen.$low - 19), true];
 	};
 	Iovec.ptr.prototype.SetLen = function(length) {
 		var iov, length;
@@ -4577,7 +4649,7 @@ $packages["syscall"] = (function() {
 	Msghdr.ptr.prototype.SetControllen = function(length) {
 		var length, msghdr;
 		msghdr = this;
-		msghdr.Controllen = ((length >>> 0));
+		msghdr.Controllen = (new $Uint64(0, length));
 	};
 	Msghdr.prototype.SetControllen = function(length) { return this.$val.SetControllen(length); };
 	mmapper.ptr.prototype.Mmap = function(fd, offset, length, prot, flags) {
@@ -4651,8 +4723,8 @@ $packages["syscall"] = (function() {
 	Errno.prototype.Error = function() {
 		var e, s;
 		e = this.$val;
-		if (0 <= ((e >> 0)) && ((e >> 0)) < 106) {
-			s = ((e < 0 || e >= errors$1.length) ? ($throwRuntimeError("index out of range"), undefined) : errors$1[e]);
+		if (0 <= ((e >> 0)) && ((e >> 0)) < 133) {
+			s = ((e < 0 || e >= errors.length) ? ($throwRuntimeError("index out of range"), undefined) : errors[e]);
 			if (!(s === "")) {
 				return s;
 			}
@@ -4663,13 +4735,13 @@ $packages["syscall"] = (function() {
 	Errno.prototype.Temporary = function() {
 		var e;
 		e = this.$val;
-		return (e === 4) || (e === 24) || (e === 54) || (e === 53) || new Errno(e).Timeout();
+		return (e === 4) || (e === 24) || (e === 104) || (e === 103) || new Errno(e).Timeout();
 	};
 	$ptrType(Errno).prototype.Temporary = function() { return new Errno(this.$get()).Temporary(); };
 	Errno.prototype.Timeout = function() {
 		var e;
 		e = this.$val;
-		return (e === 35) || (e === 35) || (e === 60);
+		return (e === 11) || (e === 11) || (e === 110);
 	};
 	$ptrType(Errno).prototype.Timeout = function() { return new Errno(this.$get()).Timeout(); };
 	errnoErr = function(e) {
@@ -4677,7 +4749,7 @@ $packages["syscall"] = (function() {
 		_1 = e;
 		if (_1 === (0)) {
 			return $ifaceNil;
-		} else if (_1 === (35)) {
+		} else if (_1 === (11)) {
 			return errEAGAIN;
 		} else if (_1 === (22)) {
 			return errEINVAL;
@@ -4700,7 +4772,7 @@ $packages["syscall"] = (function() {
 				race.WriteRange(($sliceToArray(p)), n);
 			}
 			if ($interfaceIsEqual(err, $ifaceNil)) {
-				race.Acquire(((ioSync$24ptr || (ioSync$24ptr = new ptrType$20(function() { return ioSync; }, function($v) { ioSync = $v; })))));
+				race.Acquire(((ioSync$24ptr || (ioSync$24ptr = new ptrType$22(function() { return ioSync; }, function($v) { ioSync = $v; })))));
 			}
 		}
 		if (false && n > 0) {
@@ -4716,7 +4788,7 @@ $packages["syscall"] = (function() {
 		n = 0;
 		err = $ifaceNil;
 		if (false) {
-			race.ReleaseMerge(((ioSync$24ptr || (ioSync$24ptr = new ptrType$20(function() { return ioSync; }, function($v) { ioSync = $v; })))));
+			race.ReleaseMerge(((ioSync$24ptr || (ioSync$24ptr = new ptrType$22(function() { return ioSync; }, function($v) { ioSync = $v; })))));
 		}
 		_r = write(fd, p); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
@@ -4740,9 +4812,9 @@ $packages["syscall"] = (function() {
 		n = 0;
 		from = $ifaceNil;
 		err = $ifaceNil;
-		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, 0, arrayType$4.zero()), arrayType$5.zero());
-		len[0] = 108;
-		_r = recvfrom(fd, p, flags, rsa[0], (len.$ptr || (len.$ptr = new ptrType$17(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, len)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		rsa[0] = new RawSockaddrAny.ptr(new RawSockaddr.ptr(0, arrayType$9.zero()), arrayType$10.zero());
+		len[0] = 112;
+		_r = recvfrom(fd, p, flags, rsa[0], (len.$ptr || (len.$ptr = new ptrType$18(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, len)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		n = _tuple[0];
 		err = _tuple[1];
@@ -4794,7 +4866,7 @@ $packages["syscall"] = (function() {
 		n = [n];
 		err = $ifaceNil;
 		n[0] = ((value >> 0));
-		_r = setsockopt(fd, level, opt, ((n.$ptr || (n.$ptr = new ptrType$21(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, n)))), 4); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = setsockopt(fd, level, opt, ((n.$ptr || (n.$ptr = new ptrType$4(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, n)))), 4); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		err = _r;
 		$s = -1; return err;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: SetsockoptInt }; } $f._r = _r; $f.err = err; $f.fd = fd; $f.level = level; $f.n = n; $f.opt = opt; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
@@ -4846,151 +4918,11 @@ $packages["syscall"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: SetsockoptLinger }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._view = _view; $f.err = err; $f.fd = fd; $f.l = l; $f.level = level; $f.opt = opt; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.SetsockoptLinger = SetsockoptLinger;
-	accept = function(s, rsa, addrlen) {
-		var _array, _r, _struct, _tuple, _view, addrlen, e1, err, fd, r0, rsa, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; addrlen = $f.addrlen; e1 = $f.e1; err = $f.err; fd = $f.fd; r0 = $f.r0; rsa = $f.rsa; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		fd = 0;
-		err = $ifaceNil;
-		_array = new Uint8Array(108);
-		_r = Syscall(30, ((s >>> 0)), ((_array)), ((addrlen))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = rsa, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Len = _view.getUint8(0, true), _struct.Addr.Family = _view.getUint8(1, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		fd = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [fd, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: accept }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.addrlen = addrlen; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.r0 = r0; $f.rsa = rsa; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	setsockopt = function(s, level, name, val, vallen) {
-		var _r, _tuple, e1, err, level, name, s, val, vallen, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; level = $f.level; name = $f.name; s = $f.s; val = $f.val; vallen = $f.vallen; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		err = $ifaceNil;
-		_r = Syscall6(105, ((s >>> 0)), ((level >>> 0)), ((name >>> 0)), (val), (vallen), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		e1 = _tuple[2];
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return err;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: setsockopt }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.level = level; $f.name = name; $f.s = s; $f.val = val; $f.vallen = vallen; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Shutdown = function(s, how) {
-		var _r, _tuple, e1, err, how, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; how = $f.how; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		err = $ifaceNil;
-		_r = Syscall(134, ((s >>> 0)), ((how >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		e1 = _tuple[2];
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return err;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Shutdown }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.how = how; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Shutdown = Shutdown;
-	recvfrom = function(fd, p, flags, from, fromlen) {
-		var _array, _p0, _r, _struct, _tuple, _view, e1, err, fd, flags, from, fromlen, n, p, r0, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _p0 = $f._p0; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; fd = $f.fd; flags = $f.flags; from = $f.from; fromlen = $f.fromlen; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_p0 = 0;
-		if (p.$length > 0) {
-			_p0 = ($sliceToArray(p));
-		} else {
-			_p0 = (new Uint8Array(0));
-		}
-		_array = new Uint8Array(108);
-		_r = Syscall6(29, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((flags >>> 0)), ((_array)), ((fromlen))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = from, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Len = _view.getUint8(0, true), _struct.Addr.Family = _view.getUint8(1, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: recvfrom }; } $f._array = _array; $f._p0 = _p0; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.flags = flags; $f.from = from; $f.fromlen = fromlen; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	sendto = function(s, buf, flags, to, addrlen) {
-		var _p0, _r, _tuple, addrlen, buf, e1, err, flags, s, to, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; addrlen = $f.addrlen; buf = $f.buf; e1 = $f.e1; err = $f.err; flags = $f.flags; s = $f.s; to = $f.to; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		err = $ifaceNil;
-		_p0 = 0;
-		if (buf.$length > 0) {
-			_p0 = ($sliceToArray(buf));
-		} else {
-			_p0 = (new Uint8Array(0));
-		}
-		_r = Syscall6(133, ((s >>> 0)), (_p0), ((buf.$length >>> 0)), ((flags >>> 0)), (to), ((addrlen >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		e1 = _tuple[2];
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return err;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: sendto }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.addrlen = addrlen; $f.buf = buf; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.s = s; $f.to = to; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	recvmsg = function(s, msg, flags) {
-		var _array, _r, _struct, _tuple, _view, e1, err, flags, msg, n, r0, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; flags = $f.flags; msg = $f.msg; n = $f.n; r0 = $f.r0; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_array = new Uint8Array(36);
-		_r = Syscall(27, ((s >>> 0)), ((_array)), ((flags >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = msg, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Namelen = _view.getUint32(4, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 8, _array.buffer.byteLength)), _struct.Iovlen = _view.getInt32(16, true), _struct.Pad_cgo_1 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 20, _array.buffer.byteLength)), _struct.Controllen = _view.getUint32(28, true), _struct.Flags = _view.getInt32(32, true);
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: recvmsg }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.msg = msg; $f.n = n; $f.r0 = r0; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	sendmsg = function(s, msg, flags) {
-		var _array, _r, _struct, _tuple, _view, e1, err, flags, msg, n, r0, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; flags = $f.flags; msg = $f.msg; n = $f.n; r0 = $f.r0; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_array = new Uint8Array(36);
-		_r = Syscall(28, ((s >>> 0)), ((_array)), ((flags >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = msg, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Namelen = _view.getUint32(4, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 8, _array.buffer.byteLength)), _struct.Iovlen = _view.getInt32(16, true), _struct.Pad_cgo_1 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 20, _array.buffer.byteLength)), _struct.Controllen = _view.getUint32(28, true), _struct.Flags = _view.getInt32(32, true);
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: sendmsg }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.msg = msg; $f.n = n; $f.r0 = r0; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	fcntl = function(fd, cmd, arg) {
-		var _r, _tuple, arg, cmd, e1, err, fd, r0, val, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; arg = $f.arg; cmd = $f.cmd; e1 = $f.e1; err = $f.err; fd = $f.fd; r0 = $f.r0; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		val = 0;
-		err = $ifaceNil;
-		_r = Syscall(92, ((fd >>> 0)), ((cmd >>> 0)), ((arg >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		val = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [val, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: fcntl }; } $f._r = _r; $f._tuple = _tuple; $f.arg = arg; $f.cmd = cmd; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.r0 = r0; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
-	};
 	Close = function(fd) {
 		var _r, _tuple, e1, err, fd, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_r = Syscall(6, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(3, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5004,7 +4936,7 @@ $packages["syscall"] = (function() {
 		var _r, _tuple, e1, err, fd, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_r = Syscall(13, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(81, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5018,7 +4950,7 @@ $packages["syscall"] = (function() {
 		var _r, _tuple, e1, err, fd, mode, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; mode = $f.mode; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_r = Syscall(124, ((fd >>> 0)), ((mode >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(91, ((fd >>> 0)), ((mode >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5028,11 +4960,121 @@ $packages["syscall"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Fchmod }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.mode = mode; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Fchmod = Fchmod;
+	fcntl = function(fd, cmd, arg) {
+		var _r, _tuple, arg, cmd, e1, err, fd, r0, val, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; arg = $f.arg; cmd = $f.cmd; e1 = $f.e1; err = $f.err; fd = $f.fd; r0 = $f.r0; val = $f.val; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		val = 0;
+		err = $ifaceNil;
+		_r = Syscall(72, ((fd >>> 0)), ((cmd >>> 0)), ((arg >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		val = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [val, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: fcntl }; } $f._r = _r; $f._tuple = _tuple; $f.arg = arg; $f.cmd = cmd; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.r0 = r0; $f.val = val; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Fsync = function(fd) {
+		var _r, _tuple, e1, err, fd, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		err = $ifaceNil;
+		_r = Syscall(74, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		e1 = _tuple[2];
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return err;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Fsync }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Fsync = Fsync;
+	Getdents = function(fd, buf) {
+		var _p0, _r, _tuple, buf, e1, err, fd, n, r0, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; buf = $f.buf; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_p0 = 0;
+		if (buf.$length > 0) {
+			_p0 = ($sliceToArray(buf));
+		} else {
+			_p0 = (new Uint8Array(0));
+		}
+		_r = Syscall(217, ((fd >>> 0)), (_p0), ((buf.$length >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Getdents }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.buf = buf; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Getdents = Getdents;
+	read = function(fd, p) {
+		var _p0, _r, _tuple, e1, err, fd, n, p, r0, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_p0 = 0;
+		if (p.$length > 0) {
+			_p0 = ($sliceToArray(p));
+		} else {
+			_p0 = (new Uint8Array(0));
+		}
+		_r = Syscall(0, ((fd >>> 0)), (_p0), ((p.$length >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: read }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	write = function(fd, p) {
+		var _p0, _r, _tuple, e1, err, fd, n, p, r0, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_p0 = 0;
+		if (p.$length > 0) {
+			_p0 = ($sliceToArray(p));
+		} else {
+			_p0 = (new Uint8Array(0));
+		}
+		_r = Syscall(1, ((fd >>> 0)), (_p0), ((p.$length >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: write }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	munmap = function(addr, length) {
+		var _r, _tuple, addr, e1, err, length, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; addr = $f.addr; e1 = $f.e1; err = $f.err; length = $f.length; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		err = $ifaceNil;
+		_r = Syscall(11, (addr), (length), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		e1 = _tuple[2];
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return err;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: munmap }; } $f._r = _r; $f._tuple = _tuple; $f.addr = addr; $f.e1 = e1; $f.err = err; $f.length = length; $f.$s = $s; $f.$r = $r; return $f;
+	};
 	Fchown = function(fd, uid, gid) {
 		var _r, _tuple, e1, err, fd, gid, uid, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; gid = $f.gid; uid = $f.uid; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_r = Syscall(123, ((fd >>> 0)), ((uid >>> 0)), ((gid >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(93, ((fd >>> 0)), ((uid >>> 0)), ((gid >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5047,8 +5089,8 @@ $packages["syscall"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; fd = $f.fd; stat = $f.stat; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
 		_array = new Uint8Array(144);
-		_r = Syscall(339, ((fd >>> 0)), ((_array)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = stat, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Dev = _view.getInt32(0, true), _struct.Mode = _view.getUint16(4, true), _struct.Nlink = _view.getUint16(6, true), _struct.Ino = new $Uint64(_view.getUint32(12, true), _view.getUint32(8, true)), _struct.Uid = _view.getUint32(16, true), _struct.Gid = _view.getUint32(20, true), _struct.Rdev = _view.getInt32(24, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 28, _array.buffer.byteLength)), _struct.Atimespec.Sec = new $Int64(_view.getUint32(36, true), _view.getUint32(32, true)), _struct.Atimespec.Nsec = new $Int64(_view.getUint32(44, true), _view.getUint32(40, true)), _struct.Mtimespec.Sec = new $Int64(_view.getUint32(52, true), _view.getUint32(48, true)), _struct.Mtimespec.Nsec = new $Int64(_view.getUint32(60, true), _view.getUint32(56, true)), _struct.Ctimespec.Sec = new $Int64(_view.getUint32(68, true), _view.getUint32(64, true)), _struct.Ctimespec.Nsec = new $Int64(_view.getUint32(76, true), _view.getUint32(72, true)), _struct.Birthtimespec.Sec = new $Int64(_view.getUint32(84, true), _view.getUint32(80, true)), _struct.Birthtimespec.Nsec = new $Int64(_view.getUint32(92, true), _view.getUint32(88, true)), _struct.Size = new $Int64(_view.getUint32(100, true), _view.getUint32(96, true)), _struct.Blocks = new $Int64(_view.getUint32(108, true), _view.getUint32(104, true)), _struct.Blksize = _view.getInt32(112, true), _struct.Flags = _view.getUint32(116, true), _struct.Gen = _view.getUint32(120, true), _struct.Lspare = _view.getInt32(124, true), _struct.Qspare = new ($nativeArray($kindInt64))(_array.buffer, $min(_array.byteOffset + 128, _array.buffer.byteLength));
+		_r = Syscall(5, ((fd >>> 0)), ((_array)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = stat, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Dev = new $Uint64(_view.getUint32(4, true), _view.getUint32(0, true)), _struct.Ino = new $Uint64(_view.getUint32(12, true), _view.getUint32(8, true)), _struct.Nlink = new $Uint64(_view.getUint32(20, true), _view.getUint32(16, true)), _struct.Mode = _view.getUint32(24, true), _struct.Uid = _view.getUint32(28, true), _struct.Gid = _view.getUint32(32, true), _struct.X__pad0 = _view.getInt32(36, true), _struct.Rdev = new $Uint64(_view.getUint32(44, true), _view.getUint32(40, true)), _struct.Size = new $Int64(_view.getUint32(52, true), _view.getUint32(48, true)), _struct.Blksize = new $Int64(_view.getUint32(60, true), _view.getUint32(56, true)), _struct.Blocks = new $Int64(_view.getUint32(68, true), _view.getUint32(64, true)), _struct.Atim.Sec = new $Int64(_view.getUint32(76, true), _view.getUint32(72, true)), _struct.Atim.Nsec = new $Int64(_view.getUint32(84, true), _view.getUint32(80, true)), _struct.Mtim.Sec = new $Int64(_view.getUint32(92, true), _view.getUint32(88, true)), _struct.Mtim.Nsec = new $Int64(_view.getUint32(100, true), _view.getUint32(96, true)), _struct.Ctim.Sec = new $Int64(_view.getUint32(108, true), _view.getUint32(104, true)), _struct.Ctim.Nsec = new $Int64(_view.getUint32(116, true), _view.getUint32(112, true)), _struct.X__unused = new ($nativeArray($kindInt64))(_array.buffer, $min(_array.byteOffset + 120, _array.buffer.byteLength));
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5058,25 +5100,11 @@ $packages["syscall"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Fstat }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.stat = stat; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Fstat = Fstat;
-	Fsync = function(fd) {
-		var _r, _tuple, e1, err, fd, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		err = $ifaceNil;
-		_r = Syscall(95, ((fd >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		e1 = _tuple[2];
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return err;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Fsync }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Fsync = Fsync;
 	Ftruncate = function(fd, length) {
 		var _r, _tuple, e1, err, fd, length, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; length = $f.length; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_r = Syscall(201, ((fd >>> 0)), ((length.$low >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(77, ((fd >>> 0)), ((length.$low >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
@@ -5086,29 +5114,6 @@ $packages["syscall"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Ftruncate }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.length = length; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Ftruncate = Ftruncate;
-	Getdirentries = function(fd, buf, basep) {
-		var _p0, _r, _tuple, basep, buf, e1, err, fd, n, r0, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; basep = $f.basep; buf = $f.buf; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_p0 = 0;
-		if (buf.$length > 0) {
-			_p0 = ($sliceToArray(buf));
-		} else {
-			_p0 = (new Uint8Array(0));
-		}
-		_r = Syscall6(344, ((fd >>> 0)), (_p0), ((buf.$length >>> 0)), ((basep)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Getdirentries }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.basep = basep; $f.buf = buf; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.Getdirentries = Getdirentries;
 	Lstat = function(path, stat) {
 		var _array, _p0, _r, _struct, _tuple, _tuple$1, _view, e1, err, path, stat, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _p0 = $f._p0; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _view = $f._view; e1 = $f.e1; err = $f.err; path = $f.path; stat = $f.stat; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -5121,8 +5126,8 @@ $packages["syscall"] = (function() {
 			$s = -1; return err;
 		}
 		_array = new Uint8Array(144);
-		_r = Syscall(340, ((_p0)), ((_array)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_struct = stat, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Dev = _view.getInt32(0, true), _struct.Mode = _view.getUint16(4, true), _struct.Nlink = _view.getUint16(6, true), _struct.Ino = new $Uint64(_view.getUint32(12, true), _view.getUint32(8, true)), _struct.Uid = _view.getUint32(16, true), _struct.Gid = _view.getUint32(20, true), _struct.Rdev = _view.getInt32(24, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 28, _array.buffer.byteLength)), _struct.Atimespec.Sec = new $Int64(_view.getUint32(36, true), _view.getUint32(32, true)), _struct.Atimespec.Nsec = new $Int64(_view.getUint32(44, true), _view.getUint32(40, true)), _struct.Mtimespec.Sec = new $Int64(_view.getUint32(52, true), _view.getUint32(48, true)), _struct.Mtimespec.Nsec = new $Int64(_view.getUint32(60, true), _view.getUint32(56, true)), _struct.Ctimespec.Sec = new $Int64(_view.getUint32(68, true), _view.getUint32(64, true)), _struct.Ctimespec.Nsec = new $Int64(_view.getUint32(76, true), _view.getUint32(72, true)), _struct.Birthtimespec.Sec = new $Int64(_view.getUint32(84, true), _view.getUint32(80, true)), _struct.Birthtimespec.Nsec = new $Int64(_view.getUint32(92, true), _view.getUint32(88, true)), _struct.Size = new $Int64(_view.getUint32(100, true), _view.getUint32(96, true)), _struct.Blocks = new $Int64(_view.getUint32(108, true), _view.getUint32(104, true)), _struct.Blksize = _view.getInt32(112, true), _struct.Flags = _view.getUint32(116, true), _struct.Gen = _view.getUint32(120, true), _struct.Lspare = _view.getInt32(124, true), _struct.Qspare = new ($nativeArray($kindInt64))(_array.buffer, $min(_array.byteOffset + 128, _array.buffer.byteLength));
+		_r = Syscall(6, ((_p0)), ((_array)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = stat, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Dev = new $Uint64(_view.getUint32(4, true), _view.getUint32(0, true)), _struct.Ino = new $Uint64(_view.getUint32(12, true), _view.getUint32(8, true)), _struct.Nlink = new $Uint64(_view.getUint32(20, true), _view.getUint32(16, true)), _struct.Mode = _view.getUint32(24, true), _struct.Uid = _view.getUint32(28, true), _struct.Gid = _view.getUint32(32, true), _struct.X__pad0 = _view.getInt32(36, true), _struct.Rdev = new $Uint64(_view.getUint32(44, true), _view.getUint32(40, true)), _struct.Size = new $Int64(_view.getUint32(52, true), _view.getUint32(48, true)), _struct.Blksize = new $Int64(_view.getUint32(60, true), _view.getUint32(56, true)), _struct.Blocks = new $Int64(_view.getUint32(68, true), _view.getUint32(64, true)), _struct.Atim.Sec = new $Int64(_view.getUint32(76, true), _view.getUint32(72, true)), _struct.Atim.Nsec = new $Int64(_view.getUint32(84, true), _view.getUint32(80, true)), _struct.Mtim.Sec = new $Int64(_view.getUint32(92, true), _view.getUint32(88, true)), _struct.Mtim.Nsec = new $Int64(_view.getUint32(100, true), _view.getUint32(96, true)), _struct.Ctim.Sec = new $Int64(_view.getUint32(108, true), _view.getUint32(104, true)), _struct.Ctim.Nsec = new $Int64(_view.getUint32(116, true), _view.getUint32(112, true)), _struct.X__unused = new ($nativeArray($kindInt64))(_array.buffer, $min(_array.byteOffset + 120, _array.buffer.byteLength));
 		_tuple$1 = _r;
 		e1 = _tuple$1[2];
 		if (!((e1 === 0))) {
@@ -5143,7 +5148,7 @@ $packages["syscall"] = (function() {
 		} else {
 			_p0 = (new Uint8Array(0));
 		}
-		_r = Syscall6(153, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((offset.$low >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall6(17, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((offset.$low >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		r0 = _tuple[0];
 		e1 = _tuple[2];
@@ -5166,7 +5171,7 @@ $packages["syscall"] = (function() {
 		} else {
 			_p0 = (new Uint8Array(0));
 		}
-		_r = Syscall6(154, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((offset.$low >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall6(18, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((offset.$low >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		r0 = _tuple[0];
 		e1 = _tuple[2];
@@ -5178,137 +5183,224 @@ $packages["syscall"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Pwrite }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.offset = offset; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Pwrite = Pwrite;
-	read = function(fd, p) {
-		var _p0, _r, _tuple, e1, err, fd, n, p, r0, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
-		err = $ifaceNil;
-		_p0 = 0;
-		if (p.$length > 0) {
-			_p0 = ($sliceToArray(p));
-		} else {
-			_p0 = (new Uint8Array(0));
-		}
-		_r = Syscall(3, ((fd >>> 0)), (_p0), ((p.$length >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: read }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
-	};
 	Seek = function(fd, offset, whence) {
-		var _r, _tuple, e1, err, fd, newoffset, offset, r0, whence, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; newoffset = $f.newoffset; offset = $f.offset; r0 = $f.r0; whence = $f.whence; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		newoffset = new $Int64(0, 0);
+		var _r, _tuple, e1, err, fd, off, offset, r0, whence, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; off = $f.off; offset = $f.offset; r0 = $f.r0; whence = $f.whence; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		off = new $Int64(0, 0);
 		err = $ifaceNil;
-		_r = Syscall(199, ((fd >>> 0)), ((offset.$low >>> 0)), ((whence >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(8, ((fd >>> 0)), ((offset.$low >>> 0)), ((whence >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		r0 = _tuple[0];
 		e1 = _tuple[2];
-		newoffset = (new $Int64(0, r0.constructor === Number ? r0 : 1));
+		off = (new $Int64(0, r0.constructor === Number ? r0 : 1));
 		if (!((e1 === 0))) {
 			err = errnoErr(e1);
 		}
-		$s = -1; return [newoffset, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Seek }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.newoffset = newoffset; $f.offset = offset; $f.r0 = r0; $f.whence = whence; $f.$s = $s; $f.$r = $r; return $f;
+		$s = -1; return [off, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Seek }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.off = off; $f.offset = offset; $f.r0 = r0; $f.whence = whence; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Seek = Seek;
-	write = function(fd, p) {
-		var _p0, _r, _tuple, e1, err, fd, n, p, r0, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		n = 0;
+	Shutdown = function(fd, how) {
+		var _r, _tuple, e1, err, fd, how, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; fd = $f.fd; how = $f.how; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		err = $ifaceNil;
-		_p0 = 0;
-		if (p.$length > 0) {
-			_p0 = ($sliceToArray(p));
-		} else {
-			_p0 = (new Uint8Array(0));
-		}
-		_r = Syscall(4, ((fd >>> 0)), (_p0), ((p.$length >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		n = ((r0 >> 0));
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [n, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: write }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	mmap = function(addr, length, prot, flag, fd, pos) {
-		var _r, _tuple, addr, e1, err, fd, flag, length, pos, prot, r0, ret, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; addr = $f.addr; e1 = $f.e1; err = $f.err; fd = $f.fd; flag = $f.flag; length = $f.length; pos = $f.pos; prot = $f.prot; r0 = $f.r0; ret = $f.ret; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		ret = 0;
-		err = $ifaceNil;
-		_r = Syscall6(197, (addr), (length), ((prot >>> 0)), ((flag >>> 0)), ((fd >>> 0)), ((pos.$low >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		r0 = _tuple[0];
-		e1 = _tuple[2];
-		ret = (r0);
-		if (!((e1 === 0))) {
-			err = errnoErr(e1);
-		}
-		$s = -1; return [ret, err];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: mmap }; } $f._r = _r; $f._tuple = _tuple; $f.addr = addr; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.flag = flag; $f.length = length; $f.pos = pos; $f.prot = prot; $f.r0 = r0; $f.ret = ret; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	munmap = function(addr, length) {
-		var _r, _tuple, addr, e1, err, length, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; addr = $f.addr; e1 = $f.e1; err = $f.err; length = $f.length; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		err = $ifaceNil;
-		_r = Syscall(73, (addr), (length), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = Syscall(48, ((fd >>> 0)), ((how >>> 0)), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_tuple = _r;
 		e1 = _tuple[2];
 		if (!((e1 === 0))) {
 			err = errnoErr(e1);
 		}
 		$s = -1; return err;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: munmap }; } $f._r = _r; $f._tuple = _tuple; $f.addr = addr; $f.e1 = e1; $f.err = err; $f.length = length; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Shutdown }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.how = how; $f.$s = $s; $f.$r = $r; return $f;
 	};
+	$pkg.Shutdown = Shutdown;
+	accept = function(s, rsa, addrlen) {
+		var _array, _r, _struct, _tuple, _view, addrlen, e1, err, fd, r0, rsa, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; addrlen = $f.addrlen; e1 = $f.e1; err = $f.err; fd = $f.fd; r0 = $f.r0; rsa = $f.rsa; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		fd = 0;
+		err = $ifaceNil;
+		_array = new Uint8Array(112);
+		_r = Syscall(43, ((s >>> 0)), ((_array)), ((addrlen))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = rsa, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Family = _view.getUint16(0, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		fd = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [fd, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: accept }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.addrlen = addrlen; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.r0 = r0; $f.rsa = rsa; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	accept4 = function(s, rsa, addrlen, flags) {
+		var _array, _r, _struct, _tuple, _view, addrlen, e1, err, fd, flags, r0, rsa, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; addrlen = $f.addrlen; e1 = $f.e1; err = $f.err; fd = $f.fd; flags = $f.flags; r0 = $f.r0; rsa = $f.rsa; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		fd = 0;
+		err = $ifaceNil;
+		_array = new Uint8Array(112);
+		_r = Syscall6(288, ((s >>> 0)), ((_array)), ((addrlen)), ((flags >>> 0)), 0, 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = rsa, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Family = _view.getUint16(0, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		fd = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [fd, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: accept4 }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.addrlen = addrlen; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.flags = flags; $f.r0 = r0; $f.rsa = rsa; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	setsockopt = function(s, level, name, val, vallen) {
+		var _r, _tuple, e1, err, level, name, s, val, vallen, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; e1 = $f.e1; err = $f.err; level = $f.level; name = $f.name; s = $f.s; val = $f.val; vallen = $f.vallen; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		err = $ifaceNil;
+		_r = Syscall6(54, ((s >>> 0)), ((level >>> 0)), ((name >>> 0)), (val), (vallen), 0); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		e1 = _tuple[2];
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return err;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: setsockopt }; } $f._r = _r; $f._tuple = _tuple; $f.e1 = e1; $f.err = err; $f.level = level; $f.name = name; $f.s = s; $f.val = val; $f.vallen = vallen; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	recvfrom = function(fd, p, flags, from, fromlen) {
+		var _array, _p0, _r, _struct, _tuple, _view, e1, err, fd, flags, from, fromlen, n, p, r0, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _p0 = $f._p0; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; fd = $f.fd; flags = $f.flags; from = $f.from; fromlen = $f.fromlen; n = $f.n; p = $f.p; r0 = $f.r0; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_p0 = 0;
+		if (p.$length > 0) {
+			_p0 = ($sliceToArray(p));
+		} else {
+			_p0 = (new Uint8Array(0));
+		}
+		_array = new Uint8Array(112);
+		_r = Syscall6(45, ((fd >>> 0)), (_p0), ((p.$length >>> 0)), ((flags >>> 0)), ((_array)), ((fromlen))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = from, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Addr.Family = _view.getUint16(0, true), _struct.Addr.Data = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 2, _array.buffer.byteLength)), _struct.Pad = new ($nativeArray($kindInt8))(_array.buffer, $min(_array.byteOffset + 16, _array.buffer.byteLength));
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: recvfrom }; } $f._array = _array; $f._p0 = _p0; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.flags = flags; $f.from = from; $f.fromlen = fromlen; $f.n = n; $f.p = p; $f.r0 = r0; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	sendto = function(s, buf, flags, to, addrlen) {
+		var _p0, _r, _tuple, addrlen, buf, e1, err, flags, s, to, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _p0 = $f._p0; _r = $f._r; _tuple = $f._tuple; addrlen = $f.addrlen; buf = $f.buf; e1 = $f.e1; err = $f.err; flags = $f.flags; s = $f.s; to = $f.to; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		err = $ifaceNil;
+		_p0 = 0;
+		if (buf.$length > 0) {
+			_p0 = ($sliceToArray(buf));
+		} else {
+			_p0 = (new Uint8Array(0));
+		}
+		_r = Syscall6(44, ((s >>> 0)), (_p0), ((buf.$length >>> 0)), ((flags >>> 0)), (to), ((addrlen >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		e1 = _tuple[2];
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return err;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: sendto }; } $f._p0 = _p0; $f._r = _r; $f._tuple = _tuple; $f.addrlen = addrlen; $f.buf = buf; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.s = s; $f.to = to; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	recvmsg = function(s, msg, flags) {
+		var _array, _r, _struct, _tuple, _view, e1, err, flags, msg, n, r0, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; flags = $f.flags; msg = $f.msg; n = $f.n; r0 = $f.r0; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_array = new Uint8Array(48);
+		_r = Syscall(47, ((s >>> 0)), ((_array)), ((flags >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = msg, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Namelen = _view.getUint32(4, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 8, _array.buffer.byteLength)), _struct.Iovlen = new $Uint64(_view.getUint32(20, true), _view.getUint32(16, true)), _struct.Controllen = new $Uint64(_view.getUint32(36, true), _view.getUint32(32, true)), _struct.Flags = _view.getInt32(40, true), _struct.Pad_cgo_1 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 44, _array.buffer.byteLength));
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: recvmsg }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.msg = msg; $f.n = n; $f.r0 = r0; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	sendmsg = function(s, msg, flags) {
+		var _array, _r, _struct, _tuple, _view, e1, err, flags, msg, n, r0, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _array = $f._array; _r = $f._r; _struct = $f._struct; _tuple = $f._tuple; _view = $f._view; e1 = $f.e1; err = $f.err; flags = $f.flags; msg = $f.msg; n = $f.n; r0 = $f.r0; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		n = 0;
+		err = $ifaceNil;
+		_array = new Uint8Array(48);
+		_r = Syscall(46, ((s >>> 0)), ((_array)), ((flags >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_struct = msg, _view = new DataView(_array.buffer, _array.byteOffset), _struct.Namelen = _view.getUint32(4, true), _struct.Pad_cgo_0 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 8, _array.buffer.byteLength)), _struct.Iovlen = new $Uint64(_view.getUint32(20, true), _view.getUint32(16, true)), _struct.Controllen = new $Uint64(_view.getUint32(36, true), _view.getUint32(32, true)), _struct.Flags = _view.getInt32(40, true), _struct.Pad_cgo_1 = new ($nativeArray($kindUint8))(_array.buffer, $min(_array.byteOffset + 44, _array.buffer.byteLength));
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		n = ((r0 >> 0));
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [n, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: sendmsg }; } $f._array = _array; $f._r = _r; $f._struct = _struct; $f._tuple = _tuple; $f._view = _view; $f.e1 = e1; $f.err = err; $f.flags = flags; $f.msg = msg; $f.n = n; $f.r0 = r0; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	mmap = function(addr, length, prot, flags, fd, offset) {
+		var _r, _tuple, addr, e1, err, fd, flags, length, offset, prot, r0, xaddr, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; addr = $f.addr; e1 = $f.e1; err = $f.err; fd = $f.fd; flags = $f.flags; length = $f.length; offset = $f.offset; prot = $f.prot; r0 = $f.r0; xaddr = $f.xaddr; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		xaddr = 0;
+		err = $ifaceNil;
+		_r = Syscall6(9, (addr), (length), ((prot >>> 0)), ((flags >>> 0)), ((fd >>> 0)), ((offset.$low >>> 0))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		r0 = _tuple[0];
+		e1 = _tuple[2];
+		xaddr = (r0);
+		if (!((e1 === 0))) {
+			err = errnoErr(e1);
+		}
+		$s = -1; return [xaddr, err];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: mmap }; } $f._r = _r; $f._tuple = _tuple; $f.addr = addr; $f.e1 = e1; $f.err = err; $f.fd = fd; $f.flags = flags; $f.length = length; $f.offset = offset; $f.prot = prot; $f.r0 = r0; $f.xaddr = xaddr; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	ptrType$24.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
 	ptrType$11.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
-	ptrType$27.methods = [{prop: "Mmap", name: "Mmap", pkg: "", typ: $funcType([$Int, $Int64, $Int, $Int, $Int], [sliceType, $error], false)}, {prop: "Munmap", name: "Munmap", pkg: "", typ: $funcType([sliceType], [$error], false)}];
+	ptrType$25.methods = [{prop: "Mmap", name: "Mmap", pkg: "", typ: $funcType([$Int, $Int64, $Int, $Int, $Int], [sliceType, $error], false)}, {prop: "Munmap", name: "Munmap", pkg: "", typ: $funcType([sliceType], [$error], false)}];
 	Errno.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Temporary", name: "Temporary", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Timeout", name: "Timeout", pkg: "", typ: $funcType([], [$Bool], false)}];
+	ptrType$26.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
+	ptrType$27.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
 	ptrType$28.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
-	ptrType$29.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
-	ptrType$30.methods = [{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}];
-	ptrType$31.methods = [{prop: "Unix", name: "Unix", pkg: "", typ: $funcType([], [$Int64, $Int64], false)}, {prop: "Nano", name: "Nano", pkg: "", typ: $funcType([], [$Int64], false)}];
-	ptrType$18.methods = [{prop: "SetLen", name: "SetLen", pkg: "", typ: $funcType([$Int], [], false)}];
-	ptrType$32.methods = [{prop: "SetControllen", name: "SetControllen", pkg: "", typ: $funcType([$Int], [], false)}];
-	SockaddrDatalink.init("syscall", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Index", name: "Index", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Type", name: "Type", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Nlen", name: "Nlen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Alen", name: "Alen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Slen", name: "Slen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Data", name: "Data", anonymous: false, exported: true, typ: arrayType$3, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrDatalink, tag: ""}]);
+	ptrType$29.methods = [{prop: "Unix", name: "Unix", pkg: "", typ: $funcType([], [$Int64, $Int64], false)}, {prop: "Nano", name: "Nano", pkg: "", typ: $funcType([], [$Int64], false)}];
+	ptrType$19.methods = [{prop: "SetLen", name: "SetLen", pkg: "", typ: $funcType([$Int], [], false)}];
+	ptrType$31.methods = [{prop: "SetControllen", name: "SetControllen", pkg: "", typ: $funcType([$Int], [], false)}];
+	SockaddrLinklayer.init("syscall", [{prop: "Protocol", name: "Protocol", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Ifindex", name: "Ifindex", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "Hatype", name: "Hatype", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pkttype", name: "Pkttype", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Halen", name: "Halen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrLinklayer, tag: ""}]);
+	SockaddrNetlink.init("syscall", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pad", name: "Pad", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pid", name: "Pid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Groups", name: "Groups", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrNetlink, tag: ""}]);
 	mmapper.init("syscall", [{prop: "Mutex", name: "Mutex", anonymous: true, exported: true, typ: sync.Mutex, tag: ""}, {prop: "active", name: "active", anonymous: false, exported: false, typ: mapType, tag: ""}, {prop: "mmap", name: "mmap", anonymous: false, exported: false, typ: funcType$2, tag: ""}, {prop: "munmap", name: "munmap", anonymous: false, exported: false, typ: funcType$3, tag: ""}]);
 	Sockaddr.init([{prop: "sockaddr", name: "sockaddr", pkg: "syscall", typ: $funcType([], [$UnsafePointer, _Socklen, $error], false)}]);
-	SockaddrInet4.init("syscall", [{prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrInet4, tag: ""}]);
-	SockaddrInet6.init("syscall", [{prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "ZoneId", name: "ZoneId", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrInet6, tag: ""}]);
+	SockaddrInet4.init("syscall", [{prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrInet4, tag: ""}]);
+	SockaddrInet6.init("syscall", [{prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "ZoneId", name: "ZoneId", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$2, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrInet6, tag: ""}]);
 	SockaddrUnix.init("syscall", [{prop: "Name", name: "Name", anonymous: false, exported: true, typ: $String, tag: ""}, {prop: "raw", name: "raw", anonymous: false, exported: false, typ: RawSockaddrUnix, tag: ""}]);
 	Timespec.init("", [{prop: "Sec", name: "Sec", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Nsec", name: "Nsec", anonymous: false, exported: true, typ: $Int64, tag: ""}]);
-	Stat_t.init("", [{prop: "Dev", name: "Dev", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Mode", name: "Mode", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Nlink", name: "Nlink", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Ino", name: "Ino", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Uid", name: "Uid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Gid", name: "Gid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Rdev", name: "Rdev", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Pad_cgo_0", name: "Pad_cgo_0", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "Atimespec", name: "Atimespec", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Mtimespec", name: "Mtimespec", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Ctimespec", name: "Ctimespec", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Birthtimespec", name: "Birthtimespec", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Size", name: "Size", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Blocks", name: "Blocks", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Blksize", name: "Blksize", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Flags", name: "Flags", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Gen", name: "Gen", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Lspare", name: "Lspare", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Qspare", name: "Qspare", anonymous: false, exported: true, typ: arrayType$15, tag: ""}]);
-	RawSockaddrInet4.init("", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "Zero", name: "Zero", anonymous: false, exported: true, typ: arrayType$6, tag: ""}]);
-	RawSockaddrInet6.init("", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Flowinfo", name: "Flowinfo", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Scope_id", name: "Scope_id", anonymous: false, exported: true, typ: $Uint32, tag: ""}]);
-	RawSockaddrUnix.init("", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Path", name: "Path", anonymous: false, exported: true, typ: arrayType$11, tag: ""}]);
-	RawSockaddrDatalink.init("", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Index", name: "Index", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Type", name: "Type", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Nlen", name: "Nlen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Alen", name: "Alen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Slen", name: "Slen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Data", name: "Data", anonymous: false, exported: true, typ: arrayType$3, tag: ""}]);
-	RawSockaddr.init("", [{prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Data", name: "Data", anonymous: false, exported: true, typ: arrayType$4, tag: ""}]);
-	RawSockaddrAny.init("", [{prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: RawSockaddr, tag: ""}, {prop: "Pad", name: "Pad", anonymous: false, exported: true, typ: arrayType$5, tag: ""}]);
+	Stat_t.init("", [{prop: "Dev", name: "Dev", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Ino", name: "Ino", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Nlink", name: "Nlink", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Mode", name: "Mode", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Uid", name: "Uid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Gid", name: "Gid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "X__pad0", name: "X__pad0", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Rdev", name: "Rdev", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Size", name: "Size", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Blksize", name: "Blksize", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Blocks", name: "Blocks", anonymous: false, exported: true, typ: $Int64, tag: ""}, {prop: "Atim", name: "Atim", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Mtim", name: "Mtim", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "Ctim", name: "Ctim", anonymous: false, exported: true, typ: Timespec, tag: ""}, {prop: "X__unused", name: "X__unused", anonymous: false, exported: true, typ: arrayType$15, tag: ""}]);
+	RawSockaddrInet4.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "Zero", name: "Zero", anonymous: false, exported: true, typ: arrayType$1, tag: ""}]);
+	RawSockaddrInet6.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Port", name: "Port", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Flowinfo", name: "Flowinfo", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$2, tag: ""}, {prop: "Scope_id", name: "Scope_id", anonymous: false, exported: true, typ: $Uint32, tag: ""}]);
+	RawSockaddrUnix.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Path", name: "Path", anonymous: false, exported: true, typ: arrayType$7, tag: ""}]);
+	RawSockaddrLinklayer.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Protocol", name: "Protocol", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Ifindex", name: "Ifindex", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Hatype", name: "Hatype", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pkttype", name: "Pkttype", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Halen", name: "Halen", anonymous: false, exported: true, typ: $Uint8, tag: ""}, {prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: arrayType$1, tag: ""}]);
+	RawSockaddrNetlink.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pad", name: "Pad", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Pid", name: "Pid", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Groups", name: "Groups", anonymous: false, exported: true, typ: $Uint32, tag: ""}]);
+	RawSockaddr.init("", [{prop: "Family", name: "Family", anonymous: false, exported: true, typ: $Uint16, tag: ""}, {prop: "Data", name: "Data", anonymous: false, exported: true, typ: arrayType$9, tag: ""}]);
+	RawSockaddrAny.init("", [{prop: "Addr", name: "Addr", anonymous: false, exported: true, typ: RawSockaddr, tag: ""}, {prop: "Pad", name: "Pad", anonymous: false, exported: true, typ: arrayType$10, tag: ""}]);
 	Linger.init("", [{prop: "Onoff", name: "Onoff", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Linger", name: "Linger", anonymous: false, exported: true, typ: $Int32, tag: ""}]);
 	Iovec.init("", [{prop: "Base", name: "Base", anonymous: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Len", name: "Len", anonymous: false, exported: true, typ: $Uint64, tag: ""}]);
-	IPMreq.init("", [{prop: "Multiaddr", name: "Multiaddr", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "Interface", name: "Interface", anonymous: false, exported: true, typ: arrayType$1, tag: ""}]);
-	IPv6Mreq.init("", [{prop: "Multiaddr", name: "Multiaddr", anonymous: false, exported: true, typ: arrayType, tag: ""}, {prop: "Interface", name: "Interface", anonymous: false, exported: true, typ: $Uint32, tag: ""}]);
-	Msghdr.init("", [{prop: "Name", name: "Name", anonymous: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Namelen", name: "Namelen", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Pad_cgo_0", name: "Pad_cgo_0", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "Iov", name: "Iov", anonymous: false, exported: true, typ: ptrType$18, tag: ""}, {prop: "Iovlen", name: "Iovlen", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Pad_cgo_1", name: "Pad_cgo_1", anonymous: false, exported: true, typ: arrayType$1, tag: ""}, {prop: "Control", name: "Control", anonymous: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Controllen", name: "Controllen", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Flags", name: "Flags", anonymous: false, exported: true, typ: $Int32, tag: ""}]);
+	IPMreq.init("", [{prop: "Multiaddr", name: "Multiaddr", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "Interface", name: "Interface", anonymous: false, exported: true, typ: arrayType$8, tag: ""}]);
+	IPMreqn.init("", [{prop: "Multiaddr", name: "Multiaddr", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "Address", name: "Address", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "Ifindex", name: "Ifindex", anonymous: false, exported: true, typ: $Int32, tag: ""}]);
+	IPv6Mreq.init("", [{prop: "Multiaddr", name: "Multiaddr", anonymous: false, exported: true, typ: arrayType$2, tag: ""}, {prop: "Interface", name: "Interface", anonymous: false, exported: true, typ: $Uint32, tag: ""}]);
+	Msghdr.init("", [{prop: "Name", name: "Name", anonymous: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Namelen", name: "Namelen", anonymous: false, exported: true, typ: $Uint32, tag: ""}, {prop: "Pad_cgo_0", name: "Pad_cgo_0", anonymous: false, exported: true, typ: arrayType$8, tag: ""}, {prop: "Iov", name: "Iov", anonymous: false, exported: true, typ: ptrType$19, tag: ""}, {prop: "Iovlen", name: "Iovlen", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Control", name: "Control", anonymous: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Controllen", name: "Controllen", anonymous: false, exported: true, typ: $Uint64, tag: ""}, {prop: "Flags", name: "Flags", anonymous: false, exported: true, typ: $Int32, tag: ""}, {prop: "Pad_cgo_1", name: "Pad_cgo_1", anonymous: false, exported: true, typ: arrayType$8, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		$r = errors.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = js.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = race.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = runtime.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = sync.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = js.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = race.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = runtime.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = sync.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		lineBuffer = sliceType.nil;
 		customHandler = $throwNilPointerError;
 		customHandler6 = $throwNilPointerError;
 		syscallModule = null;
-		freebsdConfArch = "";
 		ioSync = new $Int64(0, 0);
 		warningPrinted = false;
 		alreadyTriedToLoad = false;
@@ -5317,12 +5409,11 @@ $packages["syscall"] = (function() {
 		$pkg.Stdin = 0;
 		$pkg.Stdout = 1;
 		$pkg.Stderr = 2;
-		errEAGAIN = new Errno(35);
+		errEAGAIN = new Errno(11);
 		errEINVAL = new Errno(22);
 		errENOENT = new Errno(2);
-		errors$1 = $toNativeArray($kindString, ["", "operation not permitted", "no such file or directory", "no such process", "interrupted system call", "input/output error", "device not configured", "argument list too long", "exec format error", "bad file descriptor", "no child processes", "resource deadlock avoided", "cannot allocate memory", "permission denied", "bad address", "block device required", "resource busy", "file exists", "cross-device link", "operation not supported by device", "not a directory", "is a directory", "invalid argument", "too many open files in system", "too many open files", "inappropriate ioctl for device", "text file busy", "file too large", "no space left on device", "illegal seek", "read-only file system", "too many links", "broken pipe", "numerical argument out of domain", "result too large", "resource temporarily unavailable", "operation now in progress", "operation already in progress", "socket operation on non-socket", "destination address required", "message too long", "protocol wrong type for socket", "protocol not available", "protocol not supported", "socket type not supported", "operation not supported", "protocol family not supported", "address family not supported by protocol family", "address already in use", "can't assign requested address", "network is down", "network is unreachable", "network dropped connection on reset", "software caused connection abort", "connection reset by peer", "no buffer space available", "socket is already connected", "socket is not connected", "can't send after socket shutdown", "too many references: can't splice", "operation timed out", "connection refused", "too many levels of symbolic links", "file name too long", "host is down", "no route to host", "directory not empty", "too many processes", "too many users", "disc quota exceeded", "stale NFS file handle", "too many levels of remote in path", "RPC struct is bad", "RPC version wrong", "RPC prog. not avail", "program version wrong", "bad procedure for program", "no locks available", "function not implemented", "inappropriate file type or format", "authentication error", "need authenticator", "device power is off", "device error", "value too large to be stored in data type", "bad executable (or shared library)", "bad CPU type in executable", "shared library version mismatch", "malformed Mach-o file", "operation canceled", "identifier removed", "no message of desired type", "illegal byte sequence", "attribute not found", "bad message", "EMULTIHOP (Reserved)", "no message available on STREAM", "ENOLINK (Reserved)", "no STREAM resources", "not a STREAM", "protocol error", "STREAM ioctl timeout", "operation not supported on socket", "policy not found", "state not recoverable", "previous owner died"]);
+		errors = $toNativeArray($kindString, ["", "operation not permitted", "no such file or directory", "no such process", "interrupted system call", "input/output error", "no such device or address", "argument list too long", "exec format error", "bad file descriptor", "no child processes", "resource temporarily unavailable", "cannot allocate memory", "permission denied", "bad address", "block device required", "device or resource busy", "file exists", "invalid cross-device link", "no such device", "not a directory", "is a directory", "invalid argument", "too many open files in system", "too many open files", "inappropriate ioctl for device", "text file busy", "file too large", "no space left on device", "illegal seek", "read-only file system", "too many links", "broken pipe", "numerical argument out of domain", "numerical result out of range", "resource deadlock avoided", "file name too long", "no locks available", "function not implemented", "directory not empty", "too many levels of symbolic links", "", "no message of desired type", "identifier removed", "channel number out of range", "level 2 not synchronized", "level 3 halted", "level 3 reset", "link number out of range", "protocol driver not attached", "no CSI structure available", "level 2 halted", "invalid exchange", "invalid request descriptor", "exchange full", "no anode", "invalid request code", "invalid slot", "", "bad font file format", "device not a stream", "no data available", "timer expired", "out of streams resources", "machine is not on the network", "package not installed", "object is remote", "link has been severed", "advertise error", "srmount error", "communication error on send", "protocol error", "multihop attempted", "RFS specific error", "bad message", "value too large for defined data type", "name not unique on network", "file descriptor in bad state", "remote address changed", "can not access a needed shared library", "accessing a corrupted shared library", ".lib section in a.out corrupted", "attempting to link in too many shared libraries", "cannot exec a shared library directly", "invalid or incomplete multibyte or wide character", "interrupted system call should be restarted", "streams pipe error", "too many users", "socket operation on non-socket", "destination address required", "message too long", "protocol wrong type for socket", "protocol not available", "protocol not supported", "socket type not supported", "operation not supported", "protocol family not supported", "address family not supported by protocol", "address already in use", "cannot assign requested address", "network is down", "network is unreachable", "network dropped connection on reset", "software caused connection abort", "connection reset by peer", "no buffer space available", "transport endpoint is already connected", "transport endpoint is not connected", "cannot send after transport endpoint shutdown", "too many references: cannot splice", "connection timed out", "connection refused", "host is down", "no route to host", "operation already in progress", "operation now in progress", "stale NFS file handle", "structure needs cleaning", "not a XENIX named type file", "no XENIX semaphores available", "is a named type file", "remote I/O error", "disk quota exceeded", "no medium found", "wrong medium type", "operation canceled", "required key not available", "key has expired", "key has been revoked", "key was rejected by service", "owner died", "state not recoverable", "operation not possible due to RF-kill"]);
 		mapper = new mmapper.ptr(new sync.Mutex.ptr(0, 0), {}, mmap, munmap);
-		minRoutingSockaddrLen = rsaAlignOf(0);
 		init();
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -5375,7 +5466,7 @@ $packages["github.com/gopherjs/gopherjs/nosync"] = (function() {
 	return $pkg;
 })();
 $packages["time"] = (function() {
-	var $pkg = {}, $init, errors, js, nosync, runtime, syscall, ParseError, Time, Month, Weekday, Duration, Location, zone, zoneTrans, sliceType, sliceType$1, ptrType, sliceType$2, arrayType, sliceType$3, arrayType$1, arrayType$2, ptrType$2, arrayType$4, ptrType$4, ptrType$7, std0x, longDayNames, shortDayNames, shortMonthNames, longMonthNames, atoiError, errBad, errLeadingInt, months, days, daysBefore, utcLoc, utcLoc$24ptr, localLoc, localLoc$24ptr, localOnce, errLocation, badData, init, initLocal, indexByte, startsWithLowerCase, nextStdChunk, match, lookup, appendInt, atoi, formatNano, quote, isDigit, getnum, cutspace, skip, Parse, parse, parseTimeZone, parseGMT, parseNanoseconds, leadingInt, absWeekday, absClock, fmtFrac, fmtInt, lessThanHalf, absDate, daysIn, unixTime, Unix, isLeap, norm, Date, div, FixedZone;
+	var $pkg = {}, $init, errors, js, nosync, runtime, syscall, ParseError, Time, Month, Weekday, Duration, Location, zone, zoneTrans, sliceType, sliceType$1, ptrType, sliceType$2, arrayType, sliceType$3, arrayType$1, arrayType$2, ptrType$2, arrayType$4, ptrType$4, ptrType$7, std0x, longDayNames, shortDayNames, shortMonthNames, longMonthNames, atoiError, errBad, errLeadingInt, months, days, daysBefore, utcLoc, utcLoc$24ptr, localLoc, localLoc$24ptr, localOnce, errLocation, badData, zoneDirs, init, initLocal, indexByte, startsWithLowerCase, nextStdChunk, match, lookup, appendInt, atoi, formatNano, quote, isDigit, getnum, cutspace, skip, Parse, parse, parseTimeZone, parseGMT, parseNanoseconds, leadingInt, absWeekday, absClock, fmtFrac, fmtInt, lessThanHalf, absDate, daysIn, unixTime, Unix, isLeap, norm, Date, div, FixedZone;
 	errors = $packages["errors"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	nosync = $packages["github.com/gopherjs/gopherjs/nosync"];
@@ -8124,6 +8215,7 @@ $packages["time"] = (function() {
 		$pkg.Local = localLoc;
 		errLocation = errors.New("time: invalid location name");
 		badData = errors.New("malformed time zone information");
+		zoneDirs = new sliceType$2(["/usr/share/zoneinfo/", "/usr/share/lib/zoneinfo/", "/usr/lib/locale/TZ/", runtime.GOROOT() + "/lib/time/zoneinfo.zip"]);
 		init();
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -8131,7 +8223,7 @@ $packages["time"] = (function() {
 	return $pkg;
 })();
 $packages["internal/poll"] = (function() {
-	var $pkg = {}, $init, errors, io, atomic, syscall, time, pollDesc, TimeoutError, fdMutex, FD, ptrType, ptrType$1, arrayType, sliceType, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, sliceType$1, ptrType$8, funcType, funcType$1, ptrType$9, ptrType$10, ptrType$11, sliceType$2, ptrType$12, errClosing, consume, runtime_Semacquire, runtime_Semrelease, accept;
+	var $pkg = {}, $init, errors, io, atomic, syscall, time, pollDesc, TimeoutError, fdMutex, FD, ptrType, ptrType$1, arrayType, sliceType, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, sliceType$1, ptrType$9, funcType, funcType$1, ptrType$10, ptrType$11, ptrType$12, ptrType$13, sliceType$2, ptrType$14, errClosing, consume, runtime_Semacquire, runtime_Semrelease, accept;
 	errors = $packages["errors"];
 	io = $packages["io"];
 	atomic = $packages["sync/atomic"];
@@ -8169,7 +8261,7 @@ $packages["internal/poll"] = (function() {
 			this.fdmu = new fdMutex.ptr(new $Uint64(0, 0), 0, 0);
 			this.Sysfd = 0;
 			this.pd = new pollDesc.ptr(false);
-			this.iovecs = ptrType$2.nil;
+			this.iovecs = ptrType$3.nil;
 			this.IsStream = false;
 			this.ZeroReadIsEOF = false;
 			this.isFile = false;
@@ -8187,21 +8279,22 @@ $packages["internal/poll"] = (function() {
 	ptrType$1 = $ptrType($Uint32);
 	arrayType = $arrayType($Uint8, 4);
 	sliceType = $sliceType(syscall.Iovec);
-	ptrType$2 = $ptrType(sliceType);
-	ptrType$3 = $ptrType($Uint8);
-	ptrType$4 = $ptrType(FD);
-	ptrType$5 = $ptrType(pollDesc);
-	ptrType$6 = $ptrType(TimeoutError);
-	ptrType$7 = $ptrType(fdMutex);
+	ptrType$3 = $ptrType(sliceType);
+	ptrType$4 = $ptrType($Uint8);
+	ptrType$5 = $ptrType(FD);
+	ptrType$6 = $ptrType(pollDesc);
+	ptrType$7 = $ptrType(TimeoutError);
+	ptrType$8 = $ptrType(fdMutex);
 	sliceType$1 = $sliceType($Uint8);
-	ptrType$8 = $ptrType(syscall.Stat_t);
+	ptrType$9 = $ptrType(syscall.Stat_t);
 	funcType = $funcType([$Uintptr], [], false);
 	funcType$1 = $funcType([$Uintptr], [$Bool], false);
-	ptrType$9 = $ptrType(syscall.Linger);
-	ptrType$10 = $ptrType(syscall.IPMreq);
-	ptrType$11 = $ptrType(syscall.IPv6Mreq);
+	ptrType$10 = $ptrType(syscall.Linger);
+	ptrType$11 = $ptrType(syscall.IPMreqn);
+	ptrType$12 = $ptrType(syscall.IPMreq);
+	ptrType$13 = $ptrType(syscall.IPv6Mreq);
 	sliceType$2 = $sliceType(sliceType$1);
-	ptrType$12 = $ptrType(sliceType$2);
+	ptrType$14 = $ptrType(sliceType$2);
 	pollDesc.ptr.prototype.init = function(fd) {
 		var fd, pd;
 		pd = this;
@@ -8683,7 +8776,7 @@ $packages["internal/poll"] = (function() {
 			err$2 = _tuple[1];
 			if (!($interfaceIsEqual(err$2, $ifaceNil))) {
 				n = 0;
-				if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+				if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 					err$2 = fd.pd.waitRead(fd.isFile);
 					if ($interfaceIsEqual(err$2, $ifaceNil)) {
 						/* continue; */ $s = 1; continue;
@@ -8743,7 +8836,7 @@ $packages["internal/poll"] = (function() {
 			err$2 = _tuple[2];
 			if (!($interfaceIsEqual(err$2, $ifaceNil))) {
 				n = 0;
-				if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+				if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 					err$2 = fd.pd.waitRead(fd.isFile);
 					if ($interfaceIsEqual(err$2, $ifaceNil)) {
 						/* continue; */ $s = 1; continue;
@@ -8779,7 +8872,7 @@ $packages["internal/poll"] = (function() {
 			sa = _tuple[3];
 			err$2 = _tuple[4];
 			if (!($interfaceIsEqual(err$2, $ifaceNil))) {
-				if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+				if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 					err$2 = fd.pd.waitRead(fd.isFile);
 					if ($interfaceIsEqual(err$2, $ifaceNil)) {
 						/* continue; */ $s = 1; continue;
@@ -8822,7 +8915,7 @@ $packages["internal/poll"] = (function() {
 			if (nn === p.$length) {
 				$s = -1; return [nn, err$2];
 			}
-			if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+			if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 				err$2 = fd.pd.waitWrite(fd.isFile);
 				if ($interfaceIsEqual(err$2, $ifaceNil)) {
 					/* continue; */ $s = 1; continue;
@@ -8891,7 +8984,7 @@ $packages["internal/poll"] = (function() {
 		/* while (true) { */ case 1:
 			_r = syscall.Sendto(fd.Sysfd, p, 0, sa); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			err$2 = _r;
-			if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+			if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 				err$2 = fd.pd.waitWrite(fd.isFile);
 				if ($interfaceIsEqual(err$2, $ifaceNil)) {
 					/* continue; */ $s = 1; continue;
@@ -8924,7 +9017,7 @@ $packages["internal/poll"] = (function() {
 			_tuple = _r;
 			n = _tuple[0];
 			err$2 = _tuple[1];
-			if ($interfaceIsEqual(err$2, new syscall.Errno(35)) && fd.pd.pollable()) {
+			if ($interfaceIsEqual(err$2, new syscall.Errno(11)) && fd.pd.pollable()) {
 				err$2 = fd.pd.waitWrite(fd.isFile);
 				if ($interfaceIsEqual(err$2, $ifaceNil)) {
 					/* continue; */ $s = 1; continue;
@@ -8963,14 +9056,14 @@ $packages["internal/poll"] = (function() {
 				$s = -1; return [s, rsa, "", err$2];
 			}
 			_1 = err$2;
-			if ($interfaceIsEqual(_1, new syscall.Errno((35)))) {
+			if ($interfaceIsEqual(_1, new syscall.Errno((11)))) {
 				if (fd.pd.pollable()) {
 					err$2 = fd.pd.waitRead(fd.isFile);
 					if ($interfaceIsEqual(err$2, $ifaceNil)) {
 						/* continue; */ $s = 1; continue;
 					}
 				}
-			} else if ($interfaceIsEqual(_1, new syscall.Errno((53)))) {
+			} else if ($interfaceIsEqual(_1, new syscall.Errno((103)))) {
 				/* continue; */ $s = 1; continue;
 			}
 			$s = -1; return [-1, $ifaceNil, errcall, err$2];
@@ -9009,7 +9102,7 @@ $packages["internal/poll"] = (function() {
 			err$1 = _tuple[1];
 			if (!($interfaceIsEqual(err$1, $ifaceNil))) {
 				n = 0;
-				if ($interfaceIsEqual(err$1, new syscall.Errno(35)) && fd.pd.pollable()) {
+				if ($interfaceIsEqual(err$1, new syscall.Errno(11)) && fd.pd.pollable()) {
 					err$1 = fd.pd.waitRead(fd.isFile);
 					if ($interfaceIsEqual(err$1, $ifaceNil)) {
 						/* continue; */ $s = 1; continue;
@@ -9128,6 +9221,49 @@ $packages["internal/poll"] = (function() {
 		/* */ } return; } } catch(err) { $err = err; $s = -1; return $ifaceNil; } finally { $callDeferred($deferred, $err); if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: FD.ptr.prototype.RawWrite }; } $f._r = _r; $f.err = err; $f.err$1 = err$1; $f.err$2 = err$2; $f.f = f; $f.fd = fd; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	FD.prototype.RawWrite = function(f) { return this.$val.RawWrite(f); };
+	accept = function(s) {
+		var _1, _r, _r$1, _r$2, _r$3, _tuple, _tuple$1, err, ns, s, sa, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; err = $f.err; ns = $f.ns; s = $f.s; sa = $f.sa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r = $pkg.Accept4Func(s, 526336); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_tuple = _r;
+		ns = _tuple[0];
+		sa = _tuple[1];
+		err = _tuple[2];
+		_1 = err;
+		if ($interfaceIsEqual(_1, $ifaceNil)) {
+			$s = -1; return [ns, sa, "", $ifaceNil];
+		} else if ($interfaceIsEqual(_1, new syscall.Errno((38)))) {
+		} else if ($interfaceIsEqual(_1, new syscall.Errno((22)))) {
+		} else if ($interfaceIsEqual(_1, new syscall.Errno((13)))) {
+		} else if ($interfaceIsEqual(_1, new syscall.Errno((14)))) {
+		} else {
+			$s = -1; return [-1, sa, "accept4", err];
+		}
+		_r$1 = $pkg.AcceptFunc(s); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_tuple$1 = _r$1;
+		ns = _tuple$1[0];
+		sa = _tuple$1[1];
+		err = _tuple$1[2];
+		/* */ if ($interfaceIsEqual(err, $ifaceNil)) { $s = 3; continue; }
+		/* */ $s = 4; continue;
+		/* if ($interfaceIsEqual(err, $ifaceNil)) { */ case 3:
+			$r = syscall.CloseOnExec(ns); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* } */ case 4:
+		if (!($interfaceIsEqual(err, $ifaceNil))) {
+			$s = -1; return [-1, $ifaceNil, "accept", err];
+		}
+		_r$2 = syscall.SetNonblock(ns, true); /* */ $s = 6; case 6: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		err = _r$2;
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 7; continue; }
+		/* */ $s = 8; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 7:
+			_r$3 = $pkg.CloseFunc(ns); /* */ $s = 9; case 9: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			_r$3;
+			$s = -1; return [-1, $ifaceNil, "setnonblock", err];
+		/* } */ case 8:
+		$s = -1; return [ns, sa, "", $ifaceNil];
+		/* */ } return; } if ($f === undefined) { $f = { $blk: accept }; } $f._1 = _1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f.err = err; $f.ns = ns; $f.s = s; $f.sa = sa; $f.$s = $s; $f.$r = $r; return $f;
+	};
 	FD.ptr.prototype.SetsockoptInt = function(level, name, arg) {
 		var _r, arg, err, fd, level, name, $s, $deferred, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; arg = $f.arg; err = $f.err; fd = $f.fd; level = $f.level; name = $f.name; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
@@ -9170,6 +9306,20 @@ $packages["internal/poll"] = (function() {
 		/* */ } return; } } catch(err) { $err = err; $s = -1; return $ifaceNil; } finally { $callDeferred($deferred, $err); if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: FD.ptr.prototype.SetsockoptLinger }; } $f._r = _r; $f.err = err; $f.fd = fd; $f.l = l; $f.level = level; $f.name = name; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	FD.prototype.SetsockoptLinger = function(level, name, l) { return this.$val.SetsockoptLinger(level, name, l); };
+	FD.ptr.prototype.SetsockoptIPMreqn = function(level, name, mreq) {
+		var _r, err, fd, level, mreq, name, $s, $deferred, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; err = $f.err; fd = $f.fd; level = $f.level; mreq = $f.mreq; name = $f.name; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
+		fd = this;
+		err = fd.incref();
+		if (!($interfaceIsEqual(err, $ifaceNil))) {
+			$s = -1; return err;
+		}
+		$deferred.push([$methodVal(fd, "decref"), []]);
+		_r = syscall.SetsockoptIPMreqn(fd.Sysfd, level, name, mreq); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$s = -1; return _r;
+		/* */ } return; } } catch(err) { $err = err; $s = -1; return $ifaceNil; } finally { $callDeferred($deferred, $err); if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: FD.ptr.prototype.SetsockoptIPMreqn }; } $f._r = _r; $f.err = err; $f.fd = fd; $f.level = level; $f.mreq = mreq; $f.name = name; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
+	};
+	FD.prototype.SetsockoptIPMreqn = function(level, name, mreq) { return this.$val.SetsockoptIPMreqn(level, name, mreq); };
 	FD.ptr.prototype.SetsockoptByte = function(level, name, arg) {
 		var _r, arg, err, fd, level, name, $s, $deferred, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; arg = $f.arg; err = $f.err; fd = $f.fd; level = $f.level; name = $f.name; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
@@ -9212,34 +9362,6 @@ $packages["internal/poll"] = (function() {
 		/* */ } return; } } catch(err) { $err = err; $s = -1; return $ifaceNil; } finally { $callDeferred($deferred, $err); if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: FD.ptr.prototype.SetsockoptIPv6Mreq }; } $f._r = _r; $f.err = err; $f.fd = fd; $f.level = level; $f.mreq = mreq; $f.name = name; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	FD.prototype.SetsockoptIPv6Mreq = function(level, name, mreq) { return this.$val.SetsockoptIPv6Mreq(level, name, mreq); };
-	accept = function(s) {
-		var _r, _r$1, _r$2, _tuple, err, ns, s, sa, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _tuple = $f._tuple; err = $f.err; ns = $f.ns; s = $f.s; sa = $f.sa; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		_r = $pkg.AcceptFunc(s); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		_tuple = _r;
-		ns = _tuple[0];
-		sa = _tuple[1];
-		err = _tuple[2];
-		/* */ if ($interfaceIsEqual(err, $ifaceNil)) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if ($interfaceIsEqual(err, $ifaceNil)) { */ case 2:
-			$r = syscall.CloseOnExec(ns); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* } */ case 3:
-		if (!($interfaceIsEqual(err, $ifaceNil))) {
-			$s = -1; return [-1, $ifaceNil, "accept", err];
-		}
-		_r$1 = syscall.SetNonblock(ns, true); /* */ $s = 5; case 5: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		err = _r$1;
-		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 6; continue; }
-		/* */ $s = 7; continue;
-		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 6:
-			_r$2 = $pkg.CloseFunc(ns); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			_r$2;
-			$s = -1; return [-1, $ifaceNil, "setnonblock", err];
-		/* } */ case 7:
-		$s = -1; return [ns, sa, "", $ifaceNil];
-		/* */ } return; } if ($f === undefined) { $f = { $blk: accept }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tuple = _tuple; $f.err = err; $f.ns = ns; $f.s = s; $f.sa = sa; $f.$s = $s; $f.$r = $r; return $f;
-	};
 	FD.ptr.prototype.Writev = function(v) {
 		var _i, _r, _ref, _tuple, chunk, e0, err, err$1, err$2, fd, iovecs, maxVec, n, v, wrote, x, x$1, x$2, $s, $deferred, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _ref = $f._ref; _tuple = $f._tuple; chunk = $f.chunk; e0 = $f.e0; err = $f.err; err$1 = $f.err$1; err$2 = $f.err$2; fd = $f.fd; iovecs = $f.iovecs; maxVec = $f.maxVec; n = $f.n; v = $f.v; wrote = $f.wrote; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; $s = $f.$s; $deferred = $f.$deferred; $r = $f.$r; } var $err = null; try { s: while (true) { switch ($s) { case 0: $deferred = []; $deferred.index = $curGoroutine.deferStack.length; $curGoroutine.deferStack.push($deferred);
@@ -9255,7 +9377,7 @@ $packages["internal/poll"] = (function() {
 			$s = -1; return [new $Int64(0, 0), err$1];
 		}
 		iovecs[0] = sliceType.nil;
-		if (!(fd.iovecs === ptrType$2.nil)) {
+		if (!(fd.iovecs === ptrType$3.nil)) {
 			iovecs[0] = fd.iovecs.$get();
 		}
 		maxVec = 1024;
@@ -9273,7 +9395,7 @@ $packages["internal/poll"] = (function() {
 					_i++;
 					/* continue; */ $s = 3; continue;
 				}
-				iovecs[0] = $append(iovecs[0], new syscall.Iovec.ptr($indexPtr(chunk.$array, chunk.$offset + 0, ptrType$3), new $Uint64(0, 0)));
+				iovecs[0] = $append(iovecs[0], new syscall.Iovec.ptr($indexPtr(chunk.$array, chunk.$offset + 0, ptrType$4), new $Uint64(0, 0)));
 				if (fd.IsStream && chunk.$length > 1073741824) {
 					(x = iovecs[0].$length - 1 >> 0, ((x < 0 || x >= iovecs[0].$length) ? ($throwRuntimeError("index out of range"), undefined) : iovecs[0].$array[iovecs[0].$offset + x])).SetLen(1073741824);
 					/* break; */ $s = 4; continue;
@@ -9287,8 +9409,8 @@ $packages["internal/poll"] = (function() {
 			if (iovecs[0].$length === 0) {
 				/* break; */ $s = 2; continue;
 			}
-			fd.iovecs = (iovecs.$ptr || (iovecs.$ptr = new ptrType$2(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, iovecs)));
-			_r = syscall.Syscall(121, ((fd.Sysfd >>> 0)), (($sliceToArray(iovecs[0]))), ((iovecs[0].$length >>> 0))); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			fd.iovecs = (iovecs.$ptr || (iovecs.$ptr = new ptrType$3(function() { return this.$target[0]; }, function($v) { this.$target[0] = $v; }, iovecs)));
+			_r = syscall.Syscall(20, ((fd.Sysfd >>> 0)), (($sliceToArray(iovecs[0]))), ((iovecs[0].$length >>> 0))); /* */ $s = 5; case 5: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			_tuple = _r;
 			wrote = _tuple[0];
 			e0 = _tuple[2];
@@ -9298,7 +9420,7 @@ $packages["internal/poll"] = (function() {
 			$r = $pkg.TestHookDidWritev(((wrote >> 0))); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			n = (x$2 = (new $Int64(0, wrote.constructor === Number ? wrote : 1)), new $Int64(n.$high + x$2.$high, n.$low + x$2.$low));
 			consume(v, (new $Int64(0, wrote.constructor === Number ? wrote : 1)));
-			if (e0 === 35) {
+			if (e0 === 11) {
 				err$2 = fd.pd.waitWrite(fd.isFile);
 				if ($interfaceIsEqual(err$2, $ifaceNil)) {
 					/* continue; */ $s = 1; continue;
@@ -9318,14 +9440,14 @@ $packages["internal/poll"] = (function() {
 		/* */ } return; } } catch(err) { $err = err; $s = -1; return [new $Int64(0, 0), $ifaceNil]; } finally { $callDeferred($deferred, $err); if($curGoroutine.asleep) { if ($f === undefined) { $f = { $blk: FD.ptr.prototype.Writev }; } $f._i = _i; $f._r = _r; $f._ref = _ref; $f._tuple = _tuple; $f.chunk = chunk; $f.e0 = e0; $f.err = err; $f.err$1 = err$1; $f.err$2 = err$2; $f.fd = fd; $f.iovecs = iovecs; $f.maxVec = maxVec; $f.n = n; $f.v = v; $f.wrote = wrote; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$deferred = $deferred; $f.$r = $r; return $f; } }
 	};
 	FD.prototype.Writev = function(v) { return this.$val.Writev(v); };
-	ptrType$5.methods = [{prop: "init", name: "init", pkg: "internal/poll", typ: $funcType([ptrType$4], [$error], false)}, {prop: "close", name: "close", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "evict", name: "evict", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "prepare", name: "prepare", pkg: "internal/poll", typ: $funcType([$Int, $Bool], [$error], false)}, {prop: "prepareRead", name: "prepareRead", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "prepareWrite", name: "prepareWrite", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "wait", name: "wait", pkg: "internal/poll", typ: $funcType([$Int, $Bool], [$error], false)}, {prop: "waitRead", name: "waitRead", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "waitWrite", name: "waitWrite", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "waitCanceled", name: "waitCanceled", pkg: "internal/poll", typ: $funcType([$Int], [], false)}, {prop: "pollable", name: "pollable", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}];
-	ptrType$6.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Timeout", name: "Timeout", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Temporary", name: "Temporary", pkg: "", typ: $funcType([], [$Bool], false)}];
-	ptrType$7.methods = [{prop: "incref", name: "incref", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "increfAndClose", name: "increfAndClose", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "decref", name: "decref", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "rwlock", name: "rwlock", pkg: "internal/poll", typ: $funcType([$Bool], [$Bool], false)}, {prop: "rwunlock", name: "rwunlock", pkg: "internal/poll", typ: $funcType([$Bool], [$Bool], false)}];
-	ptrType$4.methods = [{prop: "SetDeadline", name: "SetDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "SetReadDeadline", name: "SetReadDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "SetWriteDeadline", name: "SetWriteDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "incref", name: "incref", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "decref", name: "decref", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "readLock", name: "readLock", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "readUnlock", name: "readUnlock", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "writeLock", name: "writeLock", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "writeUnlock", name: "writeUnlock", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "eofError", name: "eofError", pkg: "internal/poll", typ: $funcType([$Int, $error], [$error], false)}, {prop: "Fchmod", name: "Fchmod", pkg: "", typ: $funcType([$Uint32], [$error], false)}, {prop: "Fchown", name: "Fchown", pkg: "", typ: $funcType([$Int, $Int], [$error], false)}, {prop: "Ftruncate", name: "Ftruncate", pkg: "", typ: $funcType([$Int64], [$error], false)}, {prop: "Fsync", name: "Fsync", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Init", name: "Init", pkg: "", typ: $funcType([$String, $Bool], [$error], false)}, {prop: "destroy", name: "destroy", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "Close", name: "Close", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Shutdown", name: "Shutdown", pkg: "", typ: $funcType([$Int], [$error], false)}, {prop: "Read", name: "Read", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Pread", name: "Pread", pkg: "", typ: $funcType([sliceType$1, $Int64], [$Int, $error], false)}, {prop: "ReadFrom", name: "ReadFrom", pkg: "", typ: $funcType([sliceType$1], [$Int, syscall.Sockaddr, $error], false)}, {prop: "ReadMsg", name: "ReadMsg", pkg: "", typ: $funcType([sliceType$1, sliceType$1], [$Int, $Int, $Int, syscall.Sockaddr, $error], false)}, {prop: "Write", name: "Write", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Pwrite", name: "Pwrite", pkg: "", typ: $funcType([sliceType$1, $Int64], [$Int, $error], false)}, {prop: "WriteTo", name: "WriteTo", pkg: "", typ: $funcType([sliceType$1, syscall.Sockaddr], [$Int, $error], false)}, {prop: "WriteMsg", name: "WriteMsg", pkg: "", typ: $funcType([sliceType$1, sliceType$1, syscall.Sockaddr], [$Int, $Int, $error], false)}, {prop: "Accept", name: "Accept", pkg: "", typ: $funcType([], [$Int, syscall.Sockaddr, $String, $error], false)}, {prop: "Seek", name: "Seek", pkg: "", typ: $funcType([$Int64, $Int], [$Int64, $error], false)}, {prop: "ReadDirent", name: "ReadDirent", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Fchdir", name: "Fchdir", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Fstat", name: "Fstat", pkg: "", typ: $funcType([ptrType$8], [$error], false)}, {prop: "WaitWrite", name: "WaitWrite", pkg: "", typ: $funcType([], [$error], false)}, {prop: "RawControl", name: "RawControl", pkg: "", typ: $funcType([funcType], [$error], false)}, {prop: "RawRead", name: "RawRead", pkg: "", typ: $funcType([funcType$1], [$error], false)}, {prop: "RawWrite", name: "RawWrite", pkg: "", typ: $funcType([funcType$1], [$error], false)}, {prop: "SetsockoptInt", name: "SetsockoptInt", pkg: "", typ: $funcType([$Int, $Int, $Int], [$error], false)}, {prop: "SetsockoptInet4Addr", name: "SetsockoptInet4Addr", pkg: "", typ: $funcType([$Int, $Int, arrayType], [$error], false)}, {prop: "SetsockoptLinger", name: "SetsockoptLinger", pkg: "", typ: $funcType([$Int, $Int, ptrType$9], [$error], false)}, {prop: "SetsockoptByte", name: "SetsockoptByte", pkg: "", typ: $funcType([$Int, $Int, $Uint8], [$error], false)}, {prop: "SetsockoptIPMreq", name: "SetsockoptIPMreq", pkg: "", typ: $funcType([$Int, $Int, ptrType$10], [$error], false)}, {prop: "SetsockoptIPv6Mreq", name: "SetsockoptIPv6Mreq", pkg: "", typ: $funcType([$Int, $Int, ptrType$11], [$error], false)}, {prop: "Writev", name: "Writev", pkg: "", typ: $funcType([ptrType$12], [$Int64, $error], false)}];
+	ptrType$6.methods = [{prop: "init", name: "init", pkg: "internal/poll", typ: $funcType([ptrType$5], [$error], false)}, {prop: "close", name: "close", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "evict", name: "evict", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "prepare", name: "prepare", pkg: "internal/poll", typ: $funcType([$Int, $Bool], [$error], false)}, {prop: "prepareRead", name: "prepareRead", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "prepareWrite", name: "prepareWrite", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "wait", name: "wait", pkg: "internal/poll", typ: $funcType([$Int, $Bool], [$error], false)}, {prop: "waitRead", name: "waitRead", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "waitWrite", name: "waitWrite", pkg: "internal/poll", typ: $funcType([$Bool], [$error], false)}, {prop: "waitCanceled", name: "waitCanceled", pkg: "internal/poll", typ: $funcType([$Int], [], false)}, {prop: "pollable", name: "pollable", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}];
+	ptrType$7.methods = [{prop: "Error", name: "Error", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Timeout", name: "Timeout", pkg: "", typ: $funcType([], [$Bool], false)}, {prop: "Temporary", name: "Temporary", pkg: "", typ: $funcType([], [$Bool], false)}];
+	ptrType$8.methods = [{prop: "incref", name: "incref", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "increfAndClose", name: "increfAndClose", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "decref", name: "decref", pkg: "internal/poll", typ: $funcType([], [$Bool], false)}, {prop: "rwlock", name: "rwlock", pkg: "internal/poll", typ: $funcType([$Bool], [$Bool], false)}, {prop: "rwunlock", name: "rwunlock", pkg: "internal/poll", typ: $funcType([$Bool], [$Bool], false)}];
+	ptrType$5.methods = [{prop: "SetDeadline", name: "SetDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "SetReadDeadline", name: "SetReadDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "SetWriteDeadline", name: "SetWriteDeadline", pkg: "", typ: $funcType([time.Time], [$error], false)}, {prop: "incref", name: "incref", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "decref", name: "decref", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "readLock", name: "readLock", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "readUnlock", name: "readUnlock", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "writeLock", name: "writeLock", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "writeUnlock", name: "writeUnlock", pkg: "internal/poll", typ: $funcType([], [], false)}, {prop: "eofError", name: "eofError", pkg: "internal/poll", typ: $funcType([$Int, $error], [$error], false)}, {prop: "Fchmod", name: "Fchmod", pkg: "", typ: $funcType([$Uint32], [$error], false)}, {prop: "Fchown", name: "Fchown", pkg: "", typ: $funcType([$Int, $Int], [$error], false)}, {prop: "Ftruncate", name: "Ftruncate", pkg: "", typ: $funcType([$Int64], [$error], false)}, {prop: "Fsync", name: "Fsync", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Init", name: "Init", pkg: "", typ: $funcType([$String, $Bool], [$error], false)}, {prop: "destroy", name: "destroy", pkg: "internal/poll", typ: $funcType([], [$error], false)}, {prop: "Close", name: "Close", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Shutdown", name: "Shutdown", pkg: "", typ: $funcType([$Int], [$error], false)}, {prop: "Read", name: "Read", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Pread", name: "Pread", pkg: "", typ: $funcType([sliceType$1, $Int64], [$Int, $error], false)}, {prop: "ReadFrom", name: "ReadFrom", pkg: "", typ: $funcType([sliceType$1], [$Int, syscall.Sockaddr, $error], false)}, {prop: "ReadMsg", name: "ReadMsg", pkg: "", typ: $funcType([sliceType$1, sliceType$1], [$Int, $Int, $Int, syscall.Sockaddr, $error], false)}, {prop: "Write", name: "Write", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Pwrite", name: "Pwrite", pkg: "", typ: $funcType([sliceType$1, $Int64], [$Int, $error], false)}, {prop: "WriteTo", name: "WriteTo", pkg: "", typ: $funcType([sliceType$1, syscall.Sockaddr], [$Int, $error], false)}, {prop: "WriteMsg", name: "WriteMsg", pkg: "", typ: $funcType([sliceType$1, sliceType$1, syscall.Sockaddr], [$Int, $Int, $error], false)}, {prop: "Accept", name: "Accept", pkg: "", typ: $funcType([], [$Int, syscall.Sockaddr, $String, $error], false)}, {prop: "Seek", name: "Seek", pkg: "", typ: $funcType([$Int64, $Int], [$Int64, $error], false)}, {prop: "ReadDirent", name: "ReadDirent", pkg: "", typ: $funcType([sliceType$1], [$Int, $error], false)}, {prop: "Fchdir", name: "Fchdir", pkg: "", typ: $funcType([], [$error], false)}, {prop: "Fstat", name: "Fstat", pkg: "", typ: $funcType([ptrType$9], [$error], false)}, {prop: "WaitWrite", name: "WaitWrite", pkg: "", typ: $funcType([], [$error], false)}, {prop: "RawControl", name: "RawControl", pkg: "", typ: $funcType([funcType], [$error], false)}, {prop: "RawRead", name: "RawRead", pkg: "", typ: $funcType([funcType$1], [$error], false)}, {prop: "RawWrite", name: "RawWrite", pkg: "", typ: $funcType([funcType$1], [$error], false)}, {prop: "SetsockoptInt", name: "SetsockoptInt", pkg: "", typ: $funcType([$Int, $Int, $Int], [$error], false)}, {prop: "SetsockoptInet4Addr", name: "SetsockoptInet4Addr", pkg: "", typ: $funcType([$Int, $Int, arrayType], [$error], false)}, {prop: "SetsockoptLinger", name: "SetsockoptLinger", pkg: "", typ: $funcType([$Int, $Int, ptrType$10], [$error], false)}, {prop: "SetsockoptIPMreqn", name: "SetsockoptIPMreqn", pkg: "", typ: $funcType([$Int, $Int, ptrType$11], [$error], false)}, {prop: "SetsockoptByte", name: "SetsockoptByte", pkg: "", typ: $funcType([$Int, $Int, $Uint8], [$error], false)}, {prop: "SetsockoptIPMreq", name: "SetsockoptIPMreq", pkg: "", typ: $funcType([$Int, $Int, ptrType$12], [$error], false)}, {prop: "SetsockoptIPv6Mreq", name: "SetsockoptIPv6Mreq", pkg: "", typ: $funcType([$Int, $Int, ptrType$13], [$error], false)}, {prop: "Writev", name: "Writev", pkg: "", typ: $funcType([ptrType$14], [$Int64, $error], false)}];
 	pollDesc.init("internal/poll", [{prop: "closing", name: "closing", anonymous: false, exported: false, typ: $Bool, tag: ""}]);
 	TimeoutError.init("", []);
 	fdMutex.init("internal/poll", [{prop: "state", name: "state", anonymous: false, exported: false, typ: $Uint64, tag: ""}, {prop: "rsema", name: "rsema", anonymous: false, exported: false, typ: $Uint32, tag: ""}, {prop: "wsema", name: "wsema", anonymous: false, exported: false, typ: $Uint32, tag: ""}]);
-	FD.init("internal/poll", [{prop: "fdmu", name: "fdmu", anonymous: false, exported: false, typ: fdMutex, tag: ""}, {prop: "Sysfd", name: "Sysfd", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "pd", name: "pd", anonymous: false, exported: false, typ: pollDesc, tag: ""}, {prop: "iovecs", name: "iovecs", anonymous: false, exported: false, typ: ptrType$2, tag: ""}, {prop: "IsStream", name: "IsStream", anonymous: false, exported: true, typ: $Bool, tag: ""}, {prop: "ZeroReadIsEOF", name: "ZeroReadIsEOF", anonymous: false, exported: true, typ: $Bool, tag: ""}, {prop: "isFile", name: "isFile", anonymous: false, exported: false, typ: $Bool, tag: ""}]);
+	FD.init("internal/poll", [{prop: "fdmu", name: "fdmu", anonymous: false, exported: false, typ: fdMutex, tag: ""}, {prop: "Sysfd", name: "Sysfd", anonymous: false, exported: true, typ: $Int, tag: ""}, {prop: "pd", name: "pd", anonymous: false, exported: false, typ: pollDesc, tag: ""}, {prop: "iovecs", name: "iovecs", anonymous: false, exported: false, typ: ptrType$3, tag: ""}, {prop: "IsStream", name: "IsStream", anonymous: false, exported: true, typ: $Bool, tag: ""}, {prop: "ZeroReadIsEOF", name: "ZeroReadIsEOF", anonymous: false, exported: true, typ: $Bool, tag: ""}, {prop: "isFile", name: "isFile", anonymous: false, exported: false, typ: $Bool, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -9340,6 +9462,7 @@ $packages["internal/poll"] = (function() {
 		$pkg.TestHookDidWritev = (function(wrote) {
 			var wrote;
 		});
+		$pkg.Accept4Func = syscall.Accept4;
 		$pkg.CloseFunc = syscall.Close;
 		$pkg.AcceptFunc = syscall.Accept;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
@@ -9348,7 +9471,7 @@ $packages["internal/poll"] = (function() {
 	return $pkg;
 })();
 $packages["os"] = (function() {
-	var $pkg = {}, $init, errors, js, poll, io, runtime, sync, atomic, syscall, time, PathError, SyscallError, LinkError, file, dirInfo, File, FileInfo, FileMode, fileStat, sliceType, ptrType, sliceType$1, ptrType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, arrayType, sliceType$5, ptrType$12, ptrType$13, funcType$1, ptrType$15, arrayType$3, arrayType$5, ptrType$16, errFinished, lstat, useSyscallwd, _r, _r$1, _r$2, runtime_args, init, NewSyscallError, IsNotExist, underlyingError, wrapSyscallError, isNotExist, sigpipe, syscallMode, NewFile, newFile, epipecheck, init$1, useSyscallwdDarwin, basename, init$2, fillFileStatFromSys, timespecToTime, Lstat;
+	var $pkg = {}, $init, errors, js, poll, io, runtime, sync, atomic, syscall, time, PathError, SyscallError, LinkError, file, dirInfo, File, FileInfo, FileMode, fileStat, sliceType, ptrType, sliceType$1, ptrType$1, sliceType$2, ptrType$2, ptrType$3, ptrType$4, sliceType$5, ptrType$12, ptrType$13, funcType$1, ptrType$15, arrayType$2, arrayType$5, ptrType$16, errFinished, lstat, _r, _r$1, _r$2, runtime_args, init, NewSyscallError, IsNotExist, underlyingError, wrapSyscallError, isNotExist, sigpipe, syscallMode, NewFile, newFile, epipecheck, basename, init$1, fillFileStatFromSys, timespecToTime, Lstat;
 	errors = $packages["errors"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	poll = $packages["internal/poll"];
@@ -9437,7 +9560,7 @@ $packages["os"] = (function() {
 			this.size = new $Int64(0, 0);
 			this.mode = 0;
 			this.modTime = new time.Time.ptr(new $Uint64(0, 0), new $Int64(0, 0), ptrType$15.nil);
-			this.sys = new syscall.Stat_t.ptr(0, 0, 0, new $Uint64(0, 0), 0, 0, 0, arrayType.zero(), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new $Int64(0, 0), new $Int64(0, 0), 0, 0, 0, 0, arrayType$3.zero());
+			this.sys = new syscall.Stat_t.ptr(new $Uint64(0, 0), new $Uint64(0, 0), new $Uint64(0, 0), 0, 0, 0, 0, new $Uint64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), arrayType$2.zero());
 			return;
 		}
 		this.name = name_;
@@ -9454,13 +9577,12 @@ $packages["os"] = (function() {
 	ptrType$2 = $ptrType(PathError);
 	ptrType$3 = $ptrType(LinkError);
 	ptrType$4 = $ptrType(SyscallError);
-	arrayType = $arrayType($Uint8, 4);
 	sliceType$5 = $sliceType(syscall.Iovec);
 	ptrType$12 = $ptrType(sliceType$5);
 	ptrType$13 = $ptrType(file);
 	funcType$1 = $funcType([ptrType$13], [$error], false);
 	ptrType$15 = $ptrType(time.Location);
-	arrayType$3 = $arrayType($Int64, 2);
+	arrayType$2 = $arrayType($Int64, 3);
 	arrayType$5 = $arrayType($Uint8, 32);
 	ptrType$16 = $ptrType(fileStat);
 	runtime_args = function() {
@@ -10216,13 +10338,6 @@ $packages["os"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: File.ptr.prototype.seek }; } $f._r$3 = _r$3; $f._tmp = _tmp; $f._tmp$1 = _tmp$1; $f._tuple = _tuple; $f.err = err; $f.f = f; $f.offset = offset; $f.ret = ret; $f.whence = whence; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	File.prototype.seek = function(offset, whence) { return this.$val.seek(offset, whence); };
-	init$1 = function() {
-		useSyscallwd = useSyscallwdDarwin;
-	};
-	useSyscallwdDarwin = function(err) {
-		var err;
-		return !($interfaceIsEqual(err, new syscall.Errno(45)));
-	};
 	basename = function(name) {
 		var i, name;
 		i = name.length - 1 >> 0;
@@ -10242,7 +10357,7 @@ $packages["os"] = (function() {
 		}
 		return name;
 	};
-	init$2 = function() {
+	init$1 = function() {
 		if (false) {
 			return;
 		}
@@ -10252,10 +10367,10 @@ $packages["os"] = (function() {
 		var _1, fs, name;
 		fs.name = basename(name);
 		fs.size = fs.sys.Size;
-		time.Time.copy(fs.modTime, timespecToTime($clone(fs.sys.Mtimespec, syscall.Timespec)));
+		time.Time.copy(fs.modTime, timespecToTime($clone(fs.sys.Mtim, syscall.Timespec)));
 		fs.mode = ((((fs.sys.Mode & 511) >>> 0) >>> 0));
 		_1 = (fs.sys.Mode & 61440) >>> 0;
-		if ((_1 === (24576)) || (_1 === (57344))) {
+		if (_1 === (24576)) {
 			fs.mode = (fs.mode | (67108864)) >>> 0;
 		} else if (_1 === (8192)) {
 			fs.mode = (fs.mode | (69206016)) >>> 0;
@@ -10291,7 +10406,7 @@ $packages["os"] = (function() {
 		if (f === ptrType.nil) {
 			$s = -1; return [$ifaceNil, $pkg.ErrInvalid];
 		}
-		fs[0] = new fileStat.ptr("", new $Int64(0, 0), 0, new time.Time.ptr(new $Uint64(0, 0), new $Int64(0, 0), ptrType$15.nil), new syscall.Stat_t.ptr(0, 0, 0, new $Uint64(0, 0), 0, 0, 0, arrayType.zero(), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new $Int64(0, 0), new $Int64(0, 0), 0, 0, 0, 0, arrayType$3.zero()));
+		fs[0] = new fileStat.ptr("", new $Int64(0, 0), 0, new time.Time.ptr(new $Uint64(0, 0), new $Int64(0, 0), ptrType$15.nil), new syscall.Stat_t.ptr(new $Uint64(0, 0), new $Uint64(0, 0), new $Uint64(0, 0), 0, 0, 0, 0, new $Uint64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), arrayType$2.zero()));
 		_r$3 = f.file.pfd.Fstat(fs[0].sys); /* */ $s = 1; case 1: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		err = _r$3;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
@@ -10306,7 +10421,7 @@ $packages["os"] = (function() {
 		var _r$3, err, fs, name, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r$3 = $f._r$3; err = $f.err; fs = $f.fs; name = $f.name; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		fs = [fs];
-		fs[0] = new fileStat.ptr("", new $Int64(0, 0), 0, new time.Time.ptr(new $Uint64(0, 0), new $Int64(0, 0), ptrType$15.nil), new syscall.Stat_t.ptr(0, 0, 0, new $Uint64(0, 0), 0, 0, 0, arrayType.zero(), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new $Int64(0, 0), new $Int64(0, 0), 0, 0, 0, 0, arrayType$3.zero()));
+		fs[0] = new fileStat.ptr("", new $Int64(0, 0), 0, new time.Time.ptr(new $Uint64(0, 0), new $Int64(0, 0), ptrType$15.nil), new syscall.Stat_t.ptr(new $Uint64(0, 0), new $Uint64(0, 0), new $Uint64(0, 0), 0, 0, 0, 0, new $Uint64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new $Int64(0, 0), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), new syscall.Timespec.ptr(new $Int64(0, 0), new $Int64(0, 0)), arrayType$2.zero()));
 		_r$3 = syscall.Lstat(name, fs[0].sys); /* */ $s = 1; case 1: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		err = _r$3;
 		if (!($interfaceIsEqual(err, $ifaceNil))) {
@@ -10451,14 +10566,9 @@ $packages["os"] = (function() {
 		$pkg.Stdout = _r$1;
 		_r$2 = NewFile(((syscall.Stderr >>> 0)), "/dev/stderr"); /* */ $s = 12; case 12: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		$pkg.Stderr = _r$2;
-		useSyscallwd = (function(param) {
-			var param;
-			return true;
-		});
 		lstat = Lstat;
 		init();
 		init$1();
-		init$2();
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -20802,7 +20912,7 @@ $packages["fmt"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
-$packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-04"] = (function() {
+$packages["bitbucket.org/calebdoxsey/www/www/tutorials/talks/2018-01-30--extending-gopherjs/example-04"] = (function() {
 	var $pkg = {}, $init, fmt, sliceType, ptrType, main;
 	fmt = $packages["fmt"];
 	sliceType = $sliceType($emptyInterface);
@@ -20837,7 +20947,7 @@ $packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs
 	return $pkg;
 })();
 $synthesizeMethods();
-var $mainPkg = $packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-04"];
+var $mainPkg = $packages["bitbucket.org/calebdoxsey/www/www/tutorials/talks/2018-01-30--extending-gopherjs/example-04"];
 $packages["runtime"].$init();
 $go($mainPkg.$init, []);
 $flushConsole();

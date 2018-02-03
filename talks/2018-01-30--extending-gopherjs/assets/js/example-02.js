@@ -2321,7 +2321,7 @@ $packages["runtime"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
-$packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-02"] = (function() {
+$packages["bitbucket.org/calebdoxsey/www/www/tutorials/talks/2018-01-30--extending-gopherjs/example-02"] = (function() {
 	var $pkg = {}, $init, js, main;
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	main = function() {
@@ -2341,7 +2341,7 @@ $packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs
 	return $pkg;
 })();
 $synthesizeMethods();
-var $mainPkg = $packages["github.com/calebdoxsey/tutorials/talks/2018-01-30--extending-gopherjs/example-02"];
+var $mainPkg = $packages["bitbucket.org/calebdoxsey/www/www/tutorials/talks/2018-01-30--extending-gopherjs/example-02"];
 $packages["runtime"].$init();
 $go($mainPkg.$init, []);
 $flushConsole();
