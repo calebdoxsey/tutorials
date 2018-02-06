@@ -11,6 +11,8 @@ import (
 )
 
 func handleListen(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	// a path like: /listen/1234
 	port := r.URL.Path[strings.LastIndexByte(r.URL.Path, '/')+1:]
 

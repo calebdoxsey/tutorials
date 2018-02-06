@@ -7,3 +7,5 @@ package talk
 //go:generate gopherjs build -o assets/js/example-05.js ./example-05
 //go:generate gopherjs build -o assets/js/example-06.js ./example-06
 //go:generate gopherjs build -o assets/js/example-07.js ./example-07
+//go:generate gopherjs build -o assets/js/example-08-server.js ./example-08/server
+//go:generate gopherjs build -o assets/js/example-08-client.js ./example-08/client
