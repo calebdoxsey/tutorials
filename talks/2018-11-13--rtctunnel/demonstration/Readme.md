@@ -1,22 +1,22 @@
-## [1] Start Client
+## [A] Start Client
 
 ```bash
 docker run -it rtctunnel-demonstration
 rtctunnel init && rtctunnel info
 ```
 
-## [2] Start Server
+## [B] Start Server
 
 ```bash
 docker run -it rtctunnel-demonstration
 rtctunnel init && rtctunnel info
 ```
 
-## [-] Add Routes
+## [+] Add Routes
 
 ```bash
-export CLIENT_KEY=DkXsGkKpZgwsNVE1QPYKmH8aRkj1NNK795pRMfqa82xK
-export SERVER_KEY=GFxSiSSY5eHLMQ9sxSRA215Mf8WQ6MXxvokRqyW7WGEU
+export CLIENT_KEY=
+export SERVER_KEY=
 rtctunnel add-route \
     --local-peer=$CLIENT_KEY \
     --local-port=6379 \
@@ -24,19 +24,19 @@ rtctunnel add-route \
     --remote-port=6379
 ```
 
-## [2] Start Redis Server
+## [B] Start Redis Server
 
 ```bash
 redis-server &
 ```
 
-## [-] Start RTCTunnel (both)
+## [+] Start RTCTunnel (both)
 
 ```bash
-rtctunnel run 2>/dev/null &
+rtctunnel run &
 ```
 
-## [1] Start Redis Client
+## [A] Start Redis Client
 
 ```bash
 redis-cli INFO
