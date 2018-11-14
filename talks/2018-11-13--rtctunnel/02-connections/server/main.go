@@ -12,6 +12,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer li.Close()
 
 	for {
 		// Accept the next connection
