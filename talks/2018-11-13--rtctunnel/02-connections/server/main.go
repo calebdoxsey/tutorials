@@ -7,7 +7,6 @@ import (
 )
 
 func main() {
-	// Create a listener on port 8000
 	li, err := net.Listen("tcp", "127.0.0.1:8000")
 	if err != nil {
 		log.Fatalln(err)
@@ -15,7 +14,6 @@ func main() {
 	defer li.Close()
 
 	for {
-		// Accept the next connection
 		conn, err := li.Accept()
 		if err != nil {
 			log.Fatalln(err)

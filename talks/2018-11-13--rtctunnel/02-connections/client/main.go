@@ -7,12 +7,6 @@ import (
 	"net"
 )
 
-// Network connections implement io.Reader and io.Writer
-var _ interface {
-	io.Reader
-	io.Writer
-} = (net.Conn)(nil)
-
 func main() {
 	conn, err := net.Dial("tcp", "127.0.0.1:8000")
 	if err != nil {
@@ -22,6 +16,12 @@ func main() {
 
 	handle(conn)
 }
+
+// Network connections implement io.Reader and io.Writer
+var _ interface {
+	io.Reader
+	io.Writer
+} = (net.Conn)(nil)
 
 func handle(conn net.Conn) {
 	defer conn.Close()
