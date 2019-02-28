@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"regexp"
 
-	"code.google.com/p/go-uuid/uuid"
-
+	"github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -16,8 +15,8 @@ import (
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/file"
 	"google.golang.org/appengine/urlfetch"
-	"google.golang.org/cloud"
-	"google.golang.org/cloud/storage"
+	"cloud.google.com/go"
+	"cloud.google.com/go/storage"
 )
 
 type HTTPError struct {
@@ -120,7 +119,7 @@ func serveDocumentsCreate(res http.ResponseWriter, req *http.Request, params htt
 		if document.ID != "" {
 			return fmt.Errorf("invalid document: id must not be set")
 		}
-		document.ID = uuid.NewRandom().String()
+		document.ID = uuid.Must(uuid.NewRandom()).String()
 		userKey := datastore.NewKey(ctx, "User", email, 0, nil)
 		docKey := datastore.NewKey(ctx, "Document", document.ID, 0, userKey)
 		docKey, err = datastore.Put(ctx, docKey, &document)
