@@ -2,8 +2,6 @@ syntax = "proto3";
 
 option go_package = "pb";
 
-import "google/protobuf/any.proto";
-
 service BookBackend {
     rpc AddBook (AddBookRequest) returns (AddBookResponse);
     rpc GetBook (GetBookRequest) returns (GetBookResponse);
@@ -26,7 +24,8 @@ message GetBookResponse {
     Book book = 1;
     BookStats stats = 2;
     repeated BookReview reviews = 3;
-    string error = 4;
+
+    repeated string job_status = 4;
 }
 
 message ListBooksRequest {
@@ -44,19 +43,22 @@ message Book {
 }
 
 message BookStats {
-    int64 book_id = 1;
-    int64 number_of_words = 2;
-    string longest_word = 3;
+    int64 number_of_words = 1;
+    string longest_word = 2;
 }
 
 message BookReview {
-    int64 book_id = 1;
-    string user = 2;
-    string review = 3;
+    string username = 1;
+    string review = 2;
 }
 
 message Job {
     map<string, string> metadata = 1;
-    string type = 2;
+    enum Type {
+        DOWNLOAD = 0;
+        CALCULATE_STATS = 1;
+        GET_REVIEWS = 2;
+    }
+    Type type = 2;
     Book book = 3;
 }

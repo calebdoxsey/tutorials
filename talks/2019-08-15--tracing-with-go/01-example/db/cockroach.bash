@@ -18,13 +18,37 @@ while ! echo exit | nc localhost 26257; do sleep 1; done
 
 echo "creating SQL tables"
 cockroach sql \
-  --execute '
+  --execute "
 CREATE TABLE IF NOT EXISTS book (
   id BIGSERIAL,
-  title TEXT,
-  url TEXT
+  url TEXT NOT NULL DEFAULT ''
 );
-' \
+
+CREATE TABLE IF NOT EXISTS book_job_status (
+  book_id BIGINT NOT NULL,
+  job_type TEXT NOT NULL,
+  status TEXT NOT NULL,
+
+  UNIQUE(book_id, job_type)
+);
+
+CREATE TABLE IF NOT EXISTS book_download (
+  book_id BIGINT NOT NULL UNIQUE,
+  path TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS book_stat (
+  book_id BIGINT NOT NULL UNIQUE,
+  number_of_words INT NOT NULL,
+  longest_word TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS book_review (
+  book_id BIGINT NOT NULL,
+  username TEXT NOT NULL,
+  review TEXT NOT NULL
+);
+" \
   --host=localhost:26257 \
   --insecure
 

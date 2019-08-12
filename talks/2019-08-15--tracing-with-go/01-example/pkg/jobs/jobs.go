@@ -2,133 +2,138 @@ package jobs
 
 import (
 	"context"
+	"github.com/badgerodon/go-redis-streams/consumer"
+	"github.com/badgerodon/go-redis-streams/producer"
 	"github.com/calebdoxsey/tutorials/talks/2019-08-15--tracing-with-go/01-example/pb"
+	"github.com/go-redis/redis"
 	"github.com/golang/protobuf/proto"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/xerrors"
+	"time"
 )
 
-// RedisConn is a redis connection.
-type RedisConn interface {
-	SendContext(ctx context.Context, commandName string, args ...interface{}) error
-	FlushContext(context.Context) error
-	ReceiveContext(context.Context) (reply interface{}, err error)
-}
-
-// A JobType is the type of job.
-type JobType string
-
-// Job Types
 const (
-	JobTypeDownload       JobType = "download"
-	JobTypeCalculateStats JobType = "calculate-stats"
-	JobTypeGetReviews     JobType = "get-reviews"
+	groupName    = "workers"
+	streamName   = "jobs"
+	consumerName = "worker"
+	maxLen       = 100
 )
 
-// A Subscriber subscribes to jobs in the job queue.
-type Subscriber struct {
-	conn RedisConn
+// A Consumer is a job consumer.
+type Consumer struct {
+	consumer    *consumer.Consumer
+	outstanding map[*pb.Job]string
 }
 
-// NewSubscriber creates a new Subscriber.
-func NewSubscriber(ctx context.Context, conn RedisConn) (*Subscriber, error) {
-	sub := &Subscriber{conn: conn}
-
-	err := sub.conn.SendContext(ctx, "SUBSCRIBE", "jobs")
-	if err != nil {
-		return nil, xerrors.Errorf("failed to send SUBSCRIBE command for job queue: %w", err)
+// NewConsumer creates a new Consumer.
+func NewConsumer(client *redis.Client) *Consumer {
+	c := consumer.New(client, groupName, consumerName,
+		consumer.WithBlock(time.Second*10),
+		consumer.WithStream(streamName))
+	return &Consumer{
+		consumer:    c,
+		outstanding: make(map[*pb.Job]string),
 	}
-
-	err = sub.conn.FlushContext(ctx)
-	if err != nil {
-		return nil, xerrors.Errorf("failed to flush SUBSCRIBE command for job queue: %w", err)
-	}
-
-	return sub, nil
 }
 
-// Receive receives a job from the job queue.
-func (sub *Subscriber) Receive(ctx context.Context) (*pb.Job, error) {
+// Read reads a job from the job stream.
+func (c *Consumer) Read(ctx context.Context) ([]*pb.Job, error) {
 	for {
-		reply, err := sub.conn.ReceiveContext(ctx)
+		msgs, err := c.consumer.Read(ctx)
 		if err != nil {
-			return nil, xerrors.Errorf("failed to receive from job queue: %w", err)
+			return nil, err
 		}
-
-		switch msg := reply.(type) {
-		case []interface{}:
-			if len(msg) != 3 {
-				return nil, xerrors.Errorf("expected array of 3 elements as reply from subscribe, got: %v", msg)
-			}
-
-			replyType, ok := msg[0].([]byte)
+		var jobs []*pb.Job
+		for _, msg := range msgs {
+			payload, ok := msg.Values["payload"]
 			if !ok {
-				return nil, xerrors.Errorf("expected first element of array to be the reply type, but got: %T", msg[0])
+				log.Warn().Msg("invalid message in job stream: no payload detected")
+				err = c.consumer.Ack(ctx, msg)
+				if err != nil {
+					return nil, xerrors.Errorf("error acking non-job message: %w", err)
+				}
+				continue
 			}
 
-			if string(replyType) == "message" {
-				payload, ok := msg[2].([]byte)
-				if !ok {
-					return nil, xerrors.Errorf("expected payload to be a []byte, but got: %T", msg[2])
-				}
-				var job pb.Job
-				err = proto.Unmarshal(payload, &job)
+			var bs []byte
+			if v, ok := payload.([]byte); ok {
+				bs = v
+			} else if v, ok := payload.(string); ok {
+				bs = []byte(v)
+			} else {
+				log.Warn().Msgf("invalid message in job stream: invalid payload type detected: %T", payload)
+				err = c.consumer.Ack(ctx, msg)
 				if err != nil {
-					return nil, xerrors.Errorf("failed to unmarshal job in job queue: %w", err)
+					return nil, xerrors.Errorf("error acking non-job message: %w", err)
 				}
-				return &job, nil
+				continue
 			}
-		default:
-			return nil, xerrors.Errorf("unexpected message type (%T) in job queue: %v", msg, msg)
+
+			job := new(pb.Job)
+			err = proto.Unmarshal(bs, job)
+			if err != nil {
+				log.Warn().Err(err).Msg("invalid message in job stream: not a protobuf job")
+				err = c.consumer.Ack(ctx, msg)
+				if err != nil {
+					return nil, xerrors.Errorf("error acking invalid job message: %w", err)
+				}
+				continue
+			}
+
+			// all good, so add the job to the list and the outstanding map
+			c.outstanding[job] = msg.ID
+			jobs = append(jobs, job)
+		}
+		if len(jobs) > 0 {
+			return jobs, nil
 		}
 	}
 }
 
-// Close unsubscribes.
-func (sub *Subscriber) Close() error {
-	err := sub.conn.SendContext(context.Background(), "UNSUBSCRIBE", "jobs")
-	if err != nil {
-		return xerrors.Errorf("failed to send UNSUBSCRIBE request to job queue: %w", err)
+// Ack marks a job as completed.
+func (c *Consumer) Ack(ctx context.Context, jobs ...*pb.Job) error {
+	msgs := make([]consumer.Message, 0, len(jobs))
+	for _, job := range jobs {
+		if id, ok := c.outstanding[job]; ok {
+			msgs = append(msgs, consumer.Message{
+				Stream: streamName,
+				ID:     id,
+			})
+		}
 	}
-	err = sub.conn.FlushContext(context.Background())
+	err := c.consumer.Ack(ctx, msgs...)
 	if err != nil {
-		return xerrors.Errorf("failed to flush UNSUBSCRIBE request to job queue: %w", err)
+		return xerrors.Errorf("error acking jobs: %w", err)
+	}
+	for _, job := range jobs {
+		delete(c.outstanding, job)
 	}
 	return nil
 }
 
-// A Publisher publishes jobs to the job queue.
-type Publisher struct {
-	conn RedisConn
+// A Producer writes jobs to the job stream.
+type Producer struct {
+	producer *producer.Producer
 }
 
-// NewPublisher creates a new Publisher.
-func NewPublisher(conn RedisConn) *Publisher {
-	return &Publisher{
-		conn: conn,
+// NewProducer creates a new Producer.
+func NewProducer(client *redis.Client) *Producer {
+	p := producer.New(client, streamName,
+		producer.WithMaxLenApprox(maxLen))
+	return &Producer{
+		producer: p,
 	}
 }
 
-// Publish submits a job to the job queue.
-func (pub *Publisher) Publish(ctx context.Context, jobType JobType, book *pb.Book) error {
-	job := &pb.Job{
-		Type: string(jobType),
-		Book: book,
-	}
-
-	data, err := proto.Marshal(job)
+// Write writes the job to the jobs stream.
+func (p *Producer) Write(ctx context.Context, job *pb.Job) error {
+	bs, err := proto.Marshal(job)
 	if err != nil {
-		return xerrors.Errorf("failed to marshal job: %w", err)
+		return xerrors.Errorf("error marshaling job: %w", err)
 	}
-
-	err = pub.conn.SendContext(ctx, "PUBLISH", "jobs", data)
+	_, err = p.producer.Write(ctx, producer.WithField("payload", bs))
 	if err != nil {
-		return xerrors.Errorf("failed to publish job: %w", err)
+		return xerrors.Errorf("error writing job to redis jobs stream: %w", err)
 	}
-
-	err = pub.conn.FlushContext(ctx)
-	if err != nil {
-		return xerrors.Errorf("failed to flush job: %w", err)
-	}
-
 	return nil
 }

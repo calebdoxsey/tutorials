@@ -1,4 +1,4 @@
-package waitfor
+package deps
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"golang.org/x/xerrors"
 )
 
-// TCP will wait for a connection to the given tcp server.
-func TCP(ctx context.Context, addr string) error {
+// waitFor will wait for a connection to the given tcp server.
+func waitFor(ctx context.Context, addr string) error {
 	for {
 		conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", addr)
 		if xerrors.Is(err, context.Canceled) || xerrors.Is(err, context.DeadlineExceeded) {

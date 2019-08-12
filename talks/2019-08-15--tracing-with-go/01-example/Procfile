@@ -1,5 +1,6 @@
-book-www: go run github.com/cespare/reflex -s -- sh -c 'cd book-www && go run .'
-book-backend: go run github.com/cespare/reflex -s -- sh -c 'cd book-backend && go run .'
-book-worker: go run github.com/cespare/reflex -s -- sh -c 'cd book-worker && go run .'
-redis: redis-server --save "" --appendonly no
+book-www: ./run.bash book-www
+book-backend: ./run.bash book-backend
+book-worker: ./run.bash book-worker
+jaeger: ./run.bash jaeger
+redis: ./run.bash redis
 cockroach: ./db/cockroach.bash
