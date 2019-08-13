@@ -1,6 +1,0 @@
-book-www: ./run.bash book-www
-book-backend: ./run.bash book-backend
-book-worker: ./run.bash book-worker
-jaeger: ./run.bash jaeger
-redis: ./run.bash redis
-cockroach: ./db/cockroach.bash
