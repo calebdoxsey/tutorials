@@ -1,11 +1,372 @@
-Tracing With Go
+Software Tracing With Go
 
 Caleb Doxsey
 Software Engineer, Bread
 caleb@doxsey.net
 http://www.doxsey.net
+@calebdoxsey
 
-* Who I Am
+* Overview
 
-.image assets/cover.png 400 _
-.caption golang-book.com
+- Observability: Logging, Metrics and Tracing
+- A Tracing Example
+- How Tracing is Done
+- Some Go Tips
+
+* Logging
+
+- Print Debugging
+- Aggregation
+- Exploration
+
+* Logging in Go: stdlib
+
+`fmt`:
+
+    fmt.Println("logging!")
+
+`log`:
+
+    log.Printf("a log with formatting: %s\n", "some string")
+
+* Logging in Go: 3rd Party
+
+.link https://github.com/sirupsen/logrus `logrus`
+
+    log.WithFields(log.Fields{
+        "animal": "walrus",
+    }).Info("A walrus appears")
+
+.link https://github.com/google/glog `glog`
+
+    glog.V(2).Infof("LINE: %d", i)
+
+.link https://github.com/rs/zerolog `zerolog`
+
+    log.Debug().
+        Str("Scale", "833 cents").
+        Float64("Interval", 833.09).
+        Msg("Fibonacci is everywhere")
+
+* Logging in Go: logrus
+
+.image assets/github.png 400 _
+
+* Logging: ELK
+
+.image assets/kibana.png 400 _
+.caption Kibana
+
+* Logging Gotchas
+
+- logging too little
+- logging too much
+- PII
+- field types
+- logrotate settings
+- syslog blocking
+
+* Metrics
+
+- Infrastructure
+- Monitoring/Alerting
+- Statistics and Graphing
+- History
+
+* Metrics: statsd
+
+    client.Gauge("kafka.health", 1, []string{"env:production", "partition:1", "partition:2"}, 1)
+
+Types:
+
+- counter: ie, number of requests
+- gauge: ie, system load
+- histogram: used to track the statistical distribution of a set of values
+
+* Metrics: datadog
+
+.image assets/datadog.png 400 _
+.caption Datadog
+
+* Metrics: Prometheus
+
+    cpuTemp = prometheus.NewGauge(prometheus.GaugeOpts{
+      Name: "cpu_temperature_celsius",
+      Help: "Current temperature of the CPU.",
+    })
+    ...
+    cpuTemp.Set(65.3)
+
+- pull-based instead of push-based
+- can use grafana for visualization
+- supports alerting
+
+* Tracing
+
+Application Performance Monitoring (APM)
+
+* Demo: Bookalyzer
+
+.image assets/bookalyzer.png
+
+* How Tracing is Done in Go: Setup
+
+opentracing:
+
+    cfg := jaegercfg.Configuration{
+        ServiceName: serviceName,
+    }
+    cfg.InitGlobalTracer(serviceName, logger, metrics)
+
+opencensus:
+
+    je, err := jaeger.NewExporter(jaeger.Options{
+        AgentEndpoint:     agentEndpointURI,
+        CollectorEndpoint: collectorEndpointURI,
+        ServiceName:       serviceName,
+    })
+    trace.RegisterExporter(je)
+
+* How Tracing is Done in Go: Usage
+
+opentracing:
+
+    span := opentracing.StartSpan("operation")
+    defer span.Finish()
+
+opencensus:
+
+    ctx, span := trace.StartSpan(ctx, "operation")
+    defer span.End()
+
+* How Tracing is Done in Go: Context
+
+`context`:
+
+- cancellation
+- timeouts
+- metadata
+
+opencensus:
+
+    // NewContext returns a new context with the given Span attached.
+    func NewContext(parent context.Context, s *Span) context.Context {
+        return context.WithValue(parent, contextKey{}, s)
+    }
+
+    // FromContext returns the Span stored in a context, or nil if there isn't one.
+    func FromContext(ctx context.Context) *Span {
+        s, _ := ctx.Value(contextKey{}).(*Span)
+        return s
+    }
+
+* How Tracing is Done in Go: Context w/HTTP
+
+go.opencensus.io/plugin/ochttp/propagation/b3:
+
+    // SpanContextToRequest modifies the given request to include B3 headers.
+    func (f *HTTPFormat) SpanContextToRequest(sc trace.SpanContext, req *http.Request) {
+        req.Header.Set(TraceIDHeader, hex.EncodeToString(sc.TraceID[:]))
+        req.Header.Set(SpanIDHeader, hex.EncodeToString(sc.SpanID[:]))
+
+        var sampled string
+        if sc.IsSampled() {
+            sampled = "1"
+        } else {
+            sampled = "0"
+        }
+        req.Header.Set(SampledHeader, sampled)
+    }
+
+* Integrations
+
+sql:
+
+    driverName, err := ocsql.Register("postgres")
+    db, err := sql.Open(driverName, "...")
+
+etc
+
+* Integration Approaches: Middleware
+
+.link https://github.com/DataDog/dd-trace-go/blob/v1/contrib/go-chi/chi/chi.go `github.com/DataDog/dd-trace-go/contrib/go-chi/chi`
+
+    func Middleware(opts ...Option) func(next http.Handler) http.Handler {
+        // ...
+        if spanctx, err := tracer.Extract(tracer.HTTPHeadersCarrier(r.Header)); err == nil {
+            opts = append(opts, tracer.ChildOf(spanctx))
+        }
+        opts = append(opts, cfg.spanOpts...)
+        span, ctx := tracer.StartSpanFromContext(r.Context(), "http.request", opts...)
+        defer span.Finish()
+        // ...
+    }
+
+
+* Integration Approaches: Interceptor
+
+.link https://github.com/DataDog/dd-trace-go/blob/v1/contrib/google.golang.org/grpc/example_test.go `github.com/DataDog/dd-trace-gocontrib/google.golang.org/grpc`
+
+    func Example_client() {
+        // Create the client interceptor using the grpc trace package.
+        si := grpctrace.StreamClientInterceptor(grpctrace.WithServiceName("my-grpc-client"))
+        ui := grpctrace.UnaryClientInterceptor(grpctrace.WithServiceName("my-grpc-client"))
+
+        // Dial in using the created interceptor...
+        conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(),
+            grpc.WithStreamInterceptor(si), grpc.WithUnaryInterceptor(ui))
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer conn.Close()
+
+        // And continue using the connection as normal.
+    }
+
+* Integration Approaches: Replacement
+
+.link https://github.com/opencensus-integrations/redis github.com/opencensus-integrations/redis
+
+.image assets/redis-fork.png
+
+* Integration Approaches: Interfaces
+
+    func WrapConsumer(c sarama.Consumer, opts ...Option) sarama.Consumer
+
+Interface:
+
+    type Consumer interface {
+        Topics() ([]string, error)
+        Partitions(topic string) ([]int32, error)
+        ConsumePartition(topic string, partition int32, offset int64) (PartitionConsumer, error)
+        HighWaterMarks() map[string]map[int32]int64
+        Close() error
+    }
+
+* Integration Approaches: Embedding
+
+Embed the interface, replace what you need:
+
+    type consumer struct {
+        sarama.Consumer
+        opts []Option
+    }
+
+    func (c *consumer) ConsumePartition(
+        topic string,
+        partition int32,
+        offset int64,
+    ) (sarama.PartitionConsumer, error)
+
+All other methods are the same.
+
+* Integration Approaches: Version Compatibility
+
+Type assertions:
+
+    func cmderToString(cmd redis.Cmder) string {
+        // We want to support multiple versions of the go-redis library. In
+        // older versions Cmder implements the Stringer interface, while in
+        // newer versions that was removed, and this String method which
+        // sometimes returns an error is used instead. By doing a type assertion
+        // we can support both versions.
+        if s, ok := cmd.(interface{ String() string }); ok {
+            return s.String()
+        }
+
+        if s, ok := cmd.(interface{ String() (string, error) }); ok {
+            str, err := s.String()
+            if err == nil {
+                return str
+            }
+        }
+
+        return ""
+    }
+
+* Integration Approaches: Embedding Craziness
+
+`ResponseWriter`:
+
+    type responseWriter struct {
+        http.ResponseWriter
+        span   ddtrace.Span
+        status int
+    }
+
+    func newResponseWriter(w http.ResponseWriter, span ddtrace.Span) *responseWriter {
+        return &responseWriter{w, span, 0}
+    }
+
+    func (w *responseWriter) WriteHeader(status int) {
+        w.ResponseWriter.WriteHeader(status)
+        w.status = status
+        w.span.SetTag(ext.HTTPCode, strconv.Itoa(status))
+        if status >= 500 && status < 600 {
+            w.span.SetTag(ext.Error, fmt.Errorf("%d: %s", status, http.StatusText(status)))
+        }
+    }
+
+* Integration Approaches: Embedding Craziness (2)
+
+Additional HTTP Interfaces:
+
+    type Hijacker interface {
+        Hijack() (net.Conn, *bufio.ReadWriter, error)
+    }
+
+Websockets:
+
+    h, ok := w.(http.Hijacker)
+    netConn, brw, err := h.Hijack()
+
+To Support:
+
+    w := newResponseWriter(original, span)
+    if hijacker, ok := original.(http.Hijacker); ok {
+        w = struct{http.ResponseWriter, http.Hijacker}{w, hijacker}
+    }
+
+* Integration Approaches: Embedding Craziness (3)
+
+How does that work?
+
+    w = struct{http.ResponseWriter, http.Hijacker}{w, hijacker}
+
+    =>
+
+    type ResponseWriterHijacker struct {
+        http.ResponseWriter
+        http.Hijacker
+    }
+    w = ResponseWriterHijacker{w, hijacker}
+
+Embedded Field Methods are Promoted
+
+    type MyResponseWriter struct {
+        http.ResponseWriter
+    }
+    m := new(MyResponseWriter)
+
+    m.Write == m.ResponseWriter.Write
+
+
+* Integration Approaches: Embedding Craziness (4)
+
+So:
+
+    w = struct{http.ResponseWriter, http.Hijacker}{w, hijacker}
+    w.Write == w.ResponseWriter.Write
+    w.Hijack == w.Hijacker.Hijack
+
+Also:
+
+    var w http.ResponseWriter = struct{http.ResponseWriter}{w}
+
+Because Methods are Promoted
+
+* Integration Approaches: Embedding Craziness (4)
+
+But what about `http.Hijacker`, `http.Pusher`, `http.CloseNotifier`, `http.Flusher`, etc
+
+.link https://github.com/DataDog/dd-trace-go/blob/v1/contrib/internal/httputil/trace_gen.go#L23 😭
