@@ -12,6 +12,11 @@ http://www.doxsey.net
 - A Tracing Example
 - How Tracing is Done and Some Go Tips
 
+Links:
+
+.link https://github.com/calebdoxsey/tutorials/tree/master/talks/2019-08-15--tracing-with-go github.com/calebdoxsey/tutorials
+.link https://github.com/calebdoxsey/bookalyzer github.com/calebdoxsey/bookalyzer
+
 * Logging
 
 - Print Debugging
