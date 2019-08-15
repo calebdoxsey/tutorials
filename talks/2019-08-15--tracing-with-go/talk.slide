@@ -6,12 +6,11 @@ caleb@doxsey.net
 http://www.doxsey.net
 @calebdoxsey
 
-* Overview
+* Outline
 
 - Observability: Logging, Metrics and Tracing
 - A Tracing Example
-- How Tracing is Done
-- Some Go Tips
+- How Tracing is Done and Some Go Tips
 
 * Logging
 
@@ -105,9 +104,24 @@ Types:
 
 Application Performance Monitoring (APM)
 
+Concepts:
+
+- A Trace, which is a single, logical request, made up of multiple Spans
+- A Span, which represents an operation
+- Services which report the traces
+
 * Demo: Bookalyzer
 
 .image assets/bookalyzer.png
+
+* Why Tracing?
+
+- Orthogonality
+- Alerting
+- The Law of Datadog
+- Performance and Errors
+
+* An Argument With Myself
 
 * How Tracing is Done in Go: Setup
 
@@ -138,6 +152,11 @@ opencensus:
 
     ctx, span := trace.StartSpan(ctx, "operation")
     defer span.End()
+
+metadata with opentracing:
+
+    span.SetTag("net/http.reused", info.Reused)
+    span.SetTag("net/http.was_idle", info.WasIdle)
 
 * How Tracing is Done in Go: Context
 
@@ -178,6 +197,22 @@ go.opencensus.io/plugin/ochttp/propagation/b3:
         req.Header.Set(SampledHeader, sampled)
     }
 
+* How Tracing is Done in Go: Context w/grpc
+
+client:
+
+    ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+    defer cancel()
+    r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+
+
+server:
+
+    func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
+        log.Printf("Received: %v", in.Name)
+        return &pb.HelloReply{Message: "Hello " + in.Name}, nil
+    }
+
 * Integrations
 
 sql:
@@ -185,7 +220,15 @@ sql:
     driverName, err := ocsql.Register("postgres")
     db, err := sql.Open(driverName, "...")
 
-etc
+opencensus integrations:
+
+.link https://godoc.org/go.opencensus.io/plugin/ochttp HTTP
+.link https://godoc.org/go.opencensus.io/plugin/ocgrpc gRPC
+.link https://github.com/opencensus-integrations/redis Redis
+.link https://github.com/opencensus-integrations/mongo-go-driver Mongo
+.link https://github.com/opencensus-integrations/caddy Caddy
+
+etc...
 
 * Integration Approaches: Middleware
 
