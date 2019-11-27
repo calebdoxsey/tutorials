@@ -19,3 +19,5 @@ require (
 )
 
 replace github.com/gopherjs/gopherjs => github.com/badgerodon/gopherjs v0.0.0-20190227155943-3928b9b7f382
+
+go 1.13
