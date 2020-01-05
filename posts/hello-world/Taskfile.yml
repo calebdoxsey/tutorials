@@ -1,0 +1,72 @@
+# https://taskfile.dev
+
+version: "2"
+
+tasks:
+  # GO
+
+  build-go:
+    cmds:
+      - "go build -o /tmp/hello-world-go-{{.VERSION}} {{.VERSION}}.go"
+    sources:
+      - "{{.VERSION}}.go"
+    generates:
+      - "/tmp/hello-world-go-{{.VERSION}}"
+
+  build-gos:
+    deps:
+      - task: build-go
+        vars: { VERSION: v1 }
+      - task: build-go
+        vars: { VERSION: v2 }
+      - task: build-go
+        vars: { VERSION: v3 }
+
+  # ASM
+
+  compile-asm:
+    cmds:
+      - nasm -f elf64 -o /tmp/hello-world-asm-{{.VERSION}}.o {{.VERSION}}.S
+    sources:
+      - "{{.VERSION}}.S"
+    generates:
+      - /tmp/hello-world-asm-{{.VERSION}}.o
+
+  link-asm:
+    cmds:
+      - gcc -o /tmp/hello-world-asm-{{.VERSION}} -static -nostartfiles -nostdlib -nodefaultlibs /tmp/hello-world-asm-{{.VERSION}}.o
+    sources:
+      - /tmp/hello-world-asm-{{.VERSION}}.o
+    generates:
+      - /tmp/hello-world-asm-{{.VERSION}}
+
+  build-asm:
+    deps:
+      - task: compile-asm
+        vars: { VERSION: "{{.VERSION}}" }
+      - task: link-asm
+        vars: { VERSION: "{{.VERSION}}" }
+
+  build-asms:
+    deps:
+      - task: build-asm
+        vars: { VERSION: v1 }
+      - task: build-asm
+        vars: { VERSION: v2 }
+
+  build:
+    deps: [build-gos, build-asms]
+
+  default:
+    deps: [build]
+
+  measure-v1:
+    cmds:
+      - |
+        for n in 1000 2000 4000 8000 16000; do
+          for kind in asm go; do
+            echo "run $kind v1 $n times"
+            /usr/bin/time --format=%e bash -c "seq $n | xargs -P1 -n1 /tmp/hello-world-$kind-v1 > /dev/null"
+          done
+        done
+    silent: true
